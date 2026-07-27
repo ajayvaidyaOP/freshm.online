@@ -116,7 +116,7 @@ if (Object.keys(newErrors).length > 0) {
 
     console.log("User:", user);
 
-    const response = await fetch("http://localhost:8080/api/users", {
+    const response = await fetch("/api/users", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
