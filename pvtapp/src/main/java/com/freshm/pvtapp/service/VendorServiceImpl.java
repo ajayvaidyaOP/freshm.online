@@ -9,6 +9,7 @@ import com.freshm.pvtapp.dto.VendorResponse;
 import com.freshm.pvtapp.entity.Company;
 import com.freshm.pvtapp.entity.Vendor;
 import com.freshm.pvtapp.enums.CodeType;
+import com.freshm.pvtapp.exception.ResourceNotFoundException;
 import com.freshm.pvtapp.repository.CompanyRepository;
 import com.freshm.pvtapp.repository.VendorRepository;
 import com.freshm.pvtapp.security.SecurityUtil;
@@ -102,13 +103,14 @@ public class VendorServiceImpl implements VendorService {
             Long vendorId
     ) {
 
+        Company company = securityUtil.getCurrentCompany();
 
         Vendor vendor =
                 vendorRepository
-                .findById(vendorId)
+                .findByIdAndCompanyId(vendorId, company.getId())
                 .orElseThrow(
                         () ->
-                        new RuntimeException(
+                        new ResourceNotFoundException(
                                 "Vendor not found"
                         )
                 );
@@ -129,13 +131,14 @@ public class VendorServiceImpl implements VendorService {
             VendorRequest request
     ) {
 
+        Company company = securityUtil.getCurrentCompany();
 
         Vendor vendor =
                 vendorRepository
-                .findById(vendorId)
+                .findByIdAndCompanyId(vendorId, company.getId())
                 .orElseThrow(
                         () ->
-                        new RuntimeException(
+                        new ResourceNotFoundException(
                                 "Vendor not found"
                         )
                 );
@@ -203,13 +206,14 @@ public class VendorServiceImpl implements VendorService {
             Boolean status
     ) {
 
+        Company company = securityUtil.getCurrentCompany();
 
         Vendor vendor =
                 vendorRepository
-                .findById(vendorId)
+                .findByIdAndCompanyId(vendorId, company.getId())
                 .orElseThrow(
                         () ->
-                        new RuntimeException(
+                        new ResourceNotFoundException(
                                 "Vendor not found"
                         )
                 );

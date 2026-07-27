@@ -1,335 +1,117 @@
-import React from "react";
-
+import React, { useEffect, useState } from "react";
 import {
-    Box,
-    Grid,
-    Card,
-    CardContent,
-    Typography,
-    Button,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper
+  Box, Grid, Card, Stack, Typography, Divider, Chip, Button, CircularProgress,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import BusinessRoundedIcon from "@mui/icons-material/BusinessRounded";
+import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
+import BlockRoundedIcon from "@mui/icons-material/BlockRounded";
+import AdminPanelSettingsRoundedIcon from "@mui/icons-material/AdminPanelSettingsRounded";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import { sa, sprout, mono, display } from "../../superadmin/saTokens";
+import { getAllCompanies } from "../../services/companyService";
 
-
-import BusinessIcon from "@mui/icons-material/Business";
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
-import PeopleIcon from "@mui/icons-material/People";
-import AgricultureIcon from "@mui/icons-material/Agriculture";
-
-
-const cards = [
-
-{
-    title:"Total Companies",
-    value:"25",
-    icon:<BusinessIcon/>,
-    color:"#0B8F4D"
-},
-
-{
-    title:"Total Admins",
-    value:"25",
-    icon:<AdminPanelSettingsIcon/>,
-    color:"#D62828"
-},
-
-{
-    title:"Total Users",
-    value:"150",
-    icon:<PeopleIcon/>,
-    color:"#1565C0"
-},
-
-{
-    title:"Total Farmers",
-    value:"3500",
-    icon:<AgricultureIcon/>,
-    color:"#2E7D32"
+function Tile({ label, value, unit, icon, tone }) {
+  const accent = tone === "warn" ? sa.stamp : sa.forest;
+  return (
+    <Card sx={{ p: 2.25, borderRadius: 4.5, border: `1px solid ${sa.line}`, height: "100%", boxShadow: "0 18px 40px -28px rgba(14,51,32,0.3)" }}>
+      <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+        <Typography sx={{ fontFamily: mono, fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: sa.slate }}>{label}</Typography>
+        <Box sx={{ width: 34, height: 34, borderRadius: 2.5, display: "grid", placeItems: "center", color: accent, background: "rgba(46,139,78,0.10)" }}>{icon}</Box>
+      </Stack>
+      <Stack direction="row" alignItems="baseline" spacing={0.75} sx={{ mt: 1.25 }}>
+        <Typography sx={{ fontFamily: mono, fontWeight: 600, fontSize: 32, color: sa.ink }}>{value}</Typography>
+        {unit && <Typography sx={{ fontFamily: mono, fontSize: 13, color: sa.slate }}>{unit}</Typography>}
+      </Stack>
+      <Box sx={{ mt: 1.25, height: 3, borderRadius: 3, width: "42%", background: sprout }} />
+    </Card>
+  );
 }
 
-];
-
-
-const companies=[
-
-{
-    id:1,
-    name:"Fresh Agro Pvt Ltd",
-    admin:"Rahul",
-    users:15,
-    status:"Active"
-},
-
-{
-    id:2,
-    name:"Green Farm Ltd",
-    admin:"Amit",
-    users:20,
-    status:"Active"
-},
-
-{
-    id:3,
-    name:"Dubai Export Co",
-    admin:"Suresh",
-    users:10,
-    status:"Inactive"
-}
-
-];
-
-
-export default function SuperAdminDashboard(){
-
-
-return (
-
-<Box>
-
-
-<Box
-display="flex"
-justifyContent="space-between"
-mb={3}
->
-
-<Typography
-variant="h4"
-fontWeight={700}
->
-
-Super Admin Dashboard
-
-</Typography>
-
-
-<Button
-variant="contained"
-color="primary"
->
-
-+ Create Admin
-
-</Button>
-
-
-</Box>
-
-
-
-<Grid container spacing={3}>
-
-
-{
-cards.map((item,index)=>(
-
-
-<Grid
-item
-xs={12}
-sm={6}
-md={3}
-key={index}
->
-
-
-<Card>
-
-
-<CardContent>
-
-
-<Box
-display="flex"
-justifyContent="space-between"
-alignItems="center"
->
-
-
-<Box>
-
-<Typography
-color="text.secondary"
->
-
-{item.title}
-
-</Typography>
-
-
-<Typography
-variant="h4"
-fontWeight={700}
->
-
-{item.value}
-
-</Typography>
-
-
-</Box>
-
-
-<Box
-
-sx={{
-
-background:item.color,
-
-color:"#fff",
-
-width:55,
-
-height:55,
-
-borderRadius:"50%",
-
-display:"flex",
-
-alignItems:"center",
-
-justifyContent:"center"
-
-}}
-
->
-
-{item.icon}
-
-</Box>
-
-
-</Box>
-
-
-</CardContent>
-
-
-</Card>
-
-
-</Grid>
-
-
-))
-
-}
-
-
-</Grid>
-
-
-
-
-
-<Box mt={5}>
-
-
-<Typography
-variant="h5"
-mb={2}
-fontWeight={600}
->
-
-Companies
-
-</Typography>
-
-
-
-<TableContainer component={Paper}>
-
-
-<Table>
-
-
-<TableHead>
-
-<TableRow>
-
-<TableCell>
-Company Name
-</TableCell>
-
-<TableCell>
-Admin
-</TableCell>
-
-<TableCell>
-Users
-</TableCell>
-
-<TableCell>
-Status
-</TableCell>
-
-
-</TableRow>
-
-</TableHead>
-
-
-
-<TableBody>
-
-
-{
-companies.map((company)=>(
-
-
-<TableRow key={company.id}>
-
-
-<TableCell>
-{company.name}
-</TableCell>
-
-
-<TableCell>
-{company.admin}
-</TableCell>
-
-
-<TableCell>
-{company.users}
-</TableCell>
-
-
-<TableCell>
-
-{company.status}
-
-</TableCell>
-
-
-</TableRow>
-
-
-))
-
-}
-
-
-</TableBody>
-
-
-</Table>
-
-
-</TableContainer>
-
-
-</Box>
-
-
-</Box>
-
-)
-
+export default function SuperAdminDashboard() {
+  const navigate = useNavigate();
+  const [companies, setCompanies] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      try { setCompanies(await getAllCompanies()); } catch { setCompanies([]); }
+      finally { setLoading(false); }
+    })();
+  }, []);
+
+  const total = companies.length;
+  const active = companies.filter((c) => c.active !== false).length;
+  const inactive = total - active;
+  const recent = [...companies].slice(-6).reverse();
+
+  return (
+    <Box>
+      <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "flex-end" }} spacing={2} sx={{ mb: 3 }}>
+        <Box>
+          <Typography sx={{ fontFamily: mono, fontSize: 11, letterSpacing: "0.18em", color: sa.leaf, textTransform: "uppercase" }}>
+            MandiPrime · Platform
+          </Typography>
+          <Typography sx={{ fontFamily: display, fontWeight: 700, fontSize: 30, color: sa.ink, mt: 0.25 }}>
+            Platform overview
+          </Typography>
+          <Typography variant="body2" sx={{ color: sa.slate, mt: 0.5 }}>
+            Every company running FreshM. Each tenant's data stays fully isolated from the others.
+          </Typography>
+        </Box>
+        <Button variant="contained" startIcon={<AddRoundedIcon />} onClick={() => navigate("/super-admin/companies")}
+          sx={{ background: sa.forest, height: 44, borderRadius: 2.75, "&:hover": { background: sa.forestDeep } }}>
+          New company
+        </Button>
+      </Stack>
+
+      <Grid container spacing={2.5} sx={{ mb: 3 }}>
+        <Grid item xs={6} md={3}><Tile label="Companies" value={total} unit="tenants" icon={<BusinessRoundedIcon />} /></Grid>
+        <Grid item xs={6} md={3}><Tile label="Active" value={active} unit="live" icon={<CheckCircleRoundedIcon />} /></Grid>
+        <Grid item xs={6} md={3}><Tile label="Disabled" value={inactive} unit="off" tone="warn" icon={<BlockRoundedIcon />} /></Grid>
+        <Grid item xs={6} md={3}><Tile label="Admin logins" value={active} unit="can sign in" icon={<AdminPanelSettingsRoundedIcon />} /></Grid>
+      </Grid>
+
+      <Card sx={{ p: { xs: 2, md: 2.5 }, borderRadius: 4.5, border: `1px solid ${sa.line}` }}>
+        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+          <Typography sx={{ fontFamily: display, fontWeight: 700, fontSize: 18, color: sa.ink }}>Recent companies</Typography>
+          <Button size="small" onClick={() => navigate("/super-admin/companies")} sx={{ color: sa.forest }}>Manage all</Button>
+        </Stack>
+
+        {loading ? (
+          <Stack alignItems="center" sx={{ py: 5 }}><CircularProgress size={26} sx={{ color: sa.leaf }} /></Stack>
+        ) : recent.length === 0 ? (
+          <Stack alignItems="center" spacing={1.5} sx={{ py: 5, textAlign: "center" }}>
+            <Box sx={{ width: 54, height: 54, borderRadius: 4, display: "grid", placeItems: "center", color: sa.leaf, background: "rgba(46,139,78,0.10)" }}>
+              <BusinessRoundedIcon />
+            </Box>
+            <Typography sx={{ fontFamily: display, fontWeight: 700, color: sa.ink }}>No companies onboarded yet</Typography>
+            <Typography variant="body2" sx={{ color: sa.slate, maxWidth: 380 }}>
+              Add your first company to issue it an admin login and start selling the platform.
+            </Typography>
+            <Button variant="contained" onClick={() => navigate("/super-admin/companies")}
+              sx={{ background: sa.forest, borderRadius: 2.5, "&:hover": { background: sa.forestDeep } }}>Add company</Button>
+          </Stack>
+        ) : (
+          <Stack divider={<Divider />}>
+            {recent.map((c) => (
+              <Stack key={c.id} direction="row" justifyContent="space-between" alignItems="center" sx={{ py: 1.25 }}>
+                <Box>
+                  <Typography sx={{ fontWeight: 600, color: sa.ink }}>{c.companyName}</Typography>
+                  <Typography sx={{ fontFamily: mono, fontSize: 12, color: sa.slate }}>{c.companyCode} · {c.email || c.mobile || "—"}</Typography>
+                </Box>
+                <Chip size="small" label={c.active === false ? "Disabled" : "Active"}
+                  sx={{
+                    fontWeight: 600,
+                    color: c.active === false ? sa.stamp : sa.forestDeep,
+                    background: c.active === false ? "rgba(194,65,12,0.12)" : "rgba(46,139,78,0.14)",
+                    border: `1px solid ${c.active === false ? sa.stamp : sa.leaf}`,
+                  }} />
+              </Stack>
+            ))}
+          </Stack>
+        )}
+      </Card>
+    </Box>
+  );
 }

@@ -32,7 +32,9 @@ public class Company extends BaseEntity {
 
 
     private String email;
+private String gstNumber;
 
+private String panNumber;
 
     @Column(nullable = false)
     private Boolean active = true;
@@ -50,8 +52,10 @@ public class Company extends BaseEntity {
             String companyCode,
             String address,
             String mobile,
-            String email,
-            Boolean active
+          String email,
+           String gstNumber,
+        String panNumber,
+         Boolean active
     ) {
         this.id = id;
         this.companyName = companyName;
@@ -59,7 +63,9 @@ public class Company extends BaseEntity {
         this.address = address;
         this.mobile = mobile;
         this.email = email;
-        this.active = active;
+this.gstNumber = gstNumber;
+this.panNumber = panNumber;
+this.active = active;
     }
 
 
@@ -78,8 +84,9 @@ public class Company extends BaseEntity {
         private String address;
         private String mobile;
         private String email;
-        private Boolean active = true;
-
+private String gstNumber;
+private String panNumber;
+private Boolean active = true;
 
         public Builder id(Long id) {
             this.id = id;
@@ -115,7 +122,15 @@ public class Company extends BaseEntity {
             this.email = email;
             return this;
         }
+public Builder gstNumber(String gstNumber) {
+    this.gstNumber = gstNumber;
+    return this;
+}
 
+public Builder panNumber(String panNumber) {
+    this.panNumber = panNumber;
+    return this;
+}
 
         public Builder active(Boolean active) {
             this.active = active;
@@ -125,14 +140,16 @@ public class Company extends BaseEntity {
 
         public Company build() {
             return new Company(
-                    id,
-                    companyName,
-                    companyCode,
-                    address,
-                    mobile,
-                    email,
-                    active
-            );
+        id,
+        companyName,
+        companyCode,
+        address,
+        mobile,
+        email,
+        gstNumber,
+        panNumber,
+        active
+);
         }
     }
 
@@ -197,6 +214,21 @@ public class Company extends BaseEntity {
         this.email = email;
     }
 
+    public String getGstNumber() {
+    return gstNumber;
+}
+
+public void setGstNumber(String gstNumber) {
+    this.gstNumber = gstNumber;
+}
+
+public String getPanNumber() {
+    return panNumber;
+}
+
+public void setPanNumber(String panNumber) {
+    this.panNumber = panNumber;
+}
 
     public Boolean getActive() {
         return active;

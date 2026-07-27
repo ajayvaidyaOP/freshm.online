@@ -25,25 +25,29 @@ public class User extends BaseEntity {
     private Long id;
 
 
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    /*
+     * FIX: EAGER (was LAZY).
+     * A User is almost always used together with its Company (every
+     * tenant-scoped call goes through SecurityUtil.getCurrentCompany()).
+     * Loading the company in the same query as the user removes the
+     * whole class of "LazyInitializationException: no session" errors —
+     * no matter which finder or code path loads the user. It's a single
+     * small parent row, so there's no N+1 / collection blow-up.
+     */
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "company_id")
     private Company company;
-
 
 
     @Column(nullable = false)
     private String fullName;
 
 
-
     @Column(nullable = false, unique = true)
     private String email;
 
 
-
     private String mobile;
-
 
 
     @Column(nullable = false)
@@ -55,18 +59,13 @@ public class User extends BaseEntity {
     private Role role;
 
 
-
     @Column(nullable = false)
     private Boolean active = true;
-
-
 
 
     // Default constructor
     public User() {
     }
-
-
 
 
     // All arguments constructor
@@ -91,15 +90,11 @@ public class User extends BaseEntity {
     }
 
 
-
-
-
     // Builder
 
     public static Builder builder() {
         return new Builder();
     }
-
 
 
     public static class Builder {
@@ -114,65 +109,47 @@ public class User extends BaseEntity {
         private Boolean active = true;
 
 
-
         public Builder id(Long id) {
             this.id = id;
             return this;
         }
-
-
 
         public Builder company(Company company) {
             this.company = company;
             return this;
         }
 
-
-
         public Builder fullName(String fullName) {
             this.fullName = fullName;
             return this;
         }
-
-
 
         public Builder email(String email) {
             this.email = email;
             return this;
         }
 
-
-
         public Builder mobile(String mobile) {
             this.mobile = mobile;
             return this;
         }
-
-
 
         public Builder password(String password) {
             this.password = password;
             return this;
         }
 
-
-
         public Builder role(Role role) {
             this.role = role;
             return this;
         }
-
-
 
         public Builder active(Boolean active) {
             this.active = active;
             return this;
         }
 
-
-
         public User build() {
-
             return new User(
                     id,
                     company,
@@ -187,96 +164,29 @@ public class User extends BaseEntity {
     }
 
 
-
-
-
     // Getters and Setters
 
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public Long getId() {
-        return id;
-    }
+    public Company getCompany() { return company; }
+    public void setCompany(Company company) { this.company = company; }
 
+    public String getFullName() { return fullName; }
+    public void setFullName(String fullName) { this.fullName = fullName; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
+    public String getMobile() { return mobile; }
+    public void setMobile(String mobile) { this.mobile = mobile; }
 
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 
-    public Company getCompany() {
-        return company;
-    }
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
 
-
-    public void setCompany(Company company) {
-        this.company = company;
-    }
-
-
-
-    public String getFullName() {
-        return fullName;
-    }
-
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-
-
-    public String getEmail() {
-        return email;
-    }
-
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-
-
-    public String getMobile() {
-        return mobile;
-    }
-
-
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
-    }
-
-
-
-    public String getPassword() {
-        return password;
-    }
-
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-
-
-    public Role getRole() {
-        return role;
-    }
-
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-
-
-    public Boolean getActive() {
-        return active;
-    }
-
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
+    public Boolean getActive() { return active; }
+    public void setActive(Boolean active) { this.active = active; }
 }

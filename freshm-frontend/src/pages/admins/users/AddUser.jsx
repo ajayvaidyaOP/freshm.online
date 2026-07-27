@@ -1,5 +1,6 @@
-import React, { useState } from "react";
 
+
+import React, { useState } from "react";
 import {
   Box,
   Typography,
@@ -41,15 +42,12 @@ const fieldSx = {
   "& .MuiOutlinedInput-root": {
     borderRadius: 2,
     background: "#fff",
-
     "& fieldset": {
       borderColor: "rgba(0,0,0,.12)",
     },
-
     "&:hover fieldset": {
       borderColor: palette.sage,
     },
-
     "&.Mui-focused fieldset": {
       borderColor: palette.forest,
       borderWidth: 1.5,
@@ -60,9 +58,53 @@ const fieldSx = {
 export default function AddUser() {
   const [userCode, setUserCode] = useState("");
 
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    mobile: "",
+    password: "",
+    role: "USER",
+  });
+
   const generateCode = () => {
     const code = "USR" + Math.floor(1000 + Math.random() * 9000);
     setUserCode(code);
+  };
+
+  const handleSave = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+
+console.log("User:", user);
+
+const response = await fetch("http://localhost:8080/api/users", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${user?.token}`,
+  },
+  body: JSON.stringify(formData),
+});
+      if (response.ok) {
+        alert("User Created Successfully");
+
+        setFormData({
+          fullName: "",
+          email: "",
+          mobile: "",
+          password: "",
+          role: "USER",
+        });
+
+        setUserCode("");
+      } else {
+        const error = await response.text();
+        alert(error);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Server Error");
+    }
   };
 
   return (
@@ -73,8 +115,6 @@ export default function AddUser() {
         minHeight: "100vh",
       }}
     >
-      {/* Header */}
-
       <Typography
         sx={{
           fontFamily: "'Fraunces', serif",
@@ -96,8 +136,6 @@ export default function AddUser() {
         Add a new employee to the FreshM ERP platform.
       </Typography>
 
-      {/* Form Card */}
-
       <Card
         elevation={0}
         sx={{
@@ -108,12 +146,7 @@ export default function AddUser() {
         }}
       >
         <CardContent sx={{ p: 4 }}>
-          <Stack
-            direction="row"
-            alignItems="center"
-            spacing={2}
-            mb={3}
-          >
+          <Stack direction="row" alignItems="center" spacing={2} mb={3}>
             <Badge sx={{ color: palette.gold }} />
 
             <Typography
@@ -133,7 +166,14 @@ export default function AddUser() {
               <TextField
                 fullWidth
                 label="Full Name"
-                sx={fieldSx}
+                value={formData.fullName}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    fullName: e.target.value,
+                  })
+                }
+                sx={fieldSx}          
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -148,6 +188,13 @@ export default function AddUser() {
               <TextField
                 fullWidth
                 label="Email Address"
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    email: e.target.value,
+                  })
+                }
                 sx={fieldSx}
                 InputProps={{
                   startAdornment: (
@@ -163,6 +210,13 @@ export default function AddUser() {
               <TextField
                 fullWidth
                 label="Mobile Number"
+                value={formData.mobile}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    mobile: e.target.value,
+                  })
+                }
                 sx={fieldSx}
                 InputProps={{
                   startAdornment: (
@@ -179,6 +233,13 @@ export default function AddUser() {
                 select
                 fullWidth
                 label="Role"
+                value={formData.role}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    role: e.target.value,
+                  })
+                }
                 sx={fieldSx}
               >
                 <MenuItem value="USER">USER</MenuItem>
@@ -191,6 +252,13 @@ export default function AddUser() {
                 fullWidth
                 type="password"
                 label="Password"
+                value={formData.password}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    password: e.target.value,
+                  })
+                }
                 sx={fieldSx}
                 InputProps={{
                   startAdornment: (
@@ -215,11 +283,6 @@ export default function AddUser() {
                   color: palette.forest,
                   textTransform: "none",
                   fontWeight: 700,
-
-                  "&:hover": {
-                    borderColor: palette.forestDeep,
-                    background: "#f8f8f8",
-                  },
                 }}
               >
                 Generate User Code
@@ -229,7 +292,7 @@ export default function AddUser() {
                 <Typography
                   sx={{
                     mt: 2,
-                    color: palette.rust,
+                    color: palette.gold,
                     fontWeight: 700,
                   }}
                 >
@@ -242,6 +305,7 @@ export default function AddUser() {
               <Button
                 startIcon={<Save />}
                 variant="contained"
+                onClick={handleSave}
                 sx={{
                   mt: 2,
                   px: 5,
@@ -251,11 +315,6 @@ export default function AddUser() {
                   fontWeight: 700,
                   background:
                     "linear-gradient(135deg,#0F2E20,#0B2F22)",
-
-                  "&:hover": {
-                    background:
-                      "linear-gradient(135deg,#081F16,#0B2F22)",
-                  },
                 }}
               >
                 Save User

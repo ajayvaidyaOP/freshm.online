@@ -94,7 +94,7 @@ export default function Login() {
       return;
     }
 
-    try {
+   try {
       setLoading(true);
 
       const response = await loginService({
@@ -122,8 +122,64 @@ export default function Login() {
     } finally {
       setLoading(false);
     }
-  };
+  }; 
 
+
+// bypass
+
+// const handleLogin = () => {
+//   const user = {
+//     id: 1,
+//     name: "Admin",
+//     role: "ADMIN",
+//   };
+
+//   localStorage.setItem("user", JSON.stringify(user));
+//   localStorage.setItem("jwt_token", "dummy-token");
+
+//   navigate("/admin/dashboard");
+// };
+
+
+
+
+
+
+
+//   try {
+//   setLoading(true);
+
+//   const response = await loginService({
+//     email,
+//     password,
+//   });
+
+//   // Login API response print होईल
+//   console.log("========== LOGIN RESPONSE ==========");
+//   console.log(response.data);
+//   console.log("====================================");
+
+//   const user = response.data.data;
+
+//   localStorage.setItem("user", JSON.stringify(user));
+
+//   if (user.role === "SUPER_ADMIN") {
+//     navigate("/super-admin/dashboard");
+//   } else if (user.role === "ADMIN") {
+//     navigate("/admin/dashboard");
+//   } else if (user.role === "USER") {
+//     navigate("/user/dashboard");
+//   } else {
+//     setError("Invalid user role");
+//   }
+// } catch (err) {
+//   console.log(err);
+
+//   setError(err.response?.data?.message || "Invalid email or password");
+// } finally {
+//   setLoading(false);
+// }
+//   };
   const handleKeyDown = (e) => {
     if (e.key === "Enter") handleLogin();
   };

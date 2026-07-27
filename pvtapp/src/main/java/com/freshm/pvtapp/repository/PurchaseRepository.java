@@ -20,4 +20,10 @@ public interface PurchaseRepository
             String purchaseNumber
     );
 
+
+    Optional<Purchase> findByIdAndCompanyId(
+            Long id,
+            Long companyId
+    );
+
 }

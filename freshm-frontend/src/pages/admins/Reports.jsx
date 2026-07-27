@@ -19,6 +19,13 @@ ResponsiveContainer
 } from "recharts";
 
 
+const palette = {
+  paper: "#FAF6EC",
+  paperDim: "#F3EDDF",
+  ink: "#17231C",
+  inkSoft: "#4B5A50",
+};
+
 const data=[
 
 {
@@ -53,22 +60,24 @@ export default function Reports(){
 
 return(
 
-<Box>
-
-
-<Typography
-
-variant="h4"
-
-fontWeight={700}
-
-mb={3}
-
+<Box
+  sx={{
+    p: 4,
+    background: palette.paperDim,
+    minHeight: "100vh",
+  }}
 >
 
-Reports Dashboard
-
-</Typography>
+ <Typography
+    sx={{
+      fontFamily: "'Fraunces', serif",
+      fontSize: 34,
+      fontWeight: 600,
+      color: palette.ink,
+    }}
+  >
+    Reports Dashboard
+  </Typography>
 
 
 

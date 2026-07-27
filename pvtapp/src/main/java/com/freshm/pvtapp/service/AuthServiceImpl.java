@@ -40,7 +40,9 @@ public class AuthServiceImpl implements AuthService {
                 )
         );
 
-        User user = userRepository.findByEmail(request.getEmail())
+        // FIX: fetch the company in the SAME query (was findByEmail, which
+        // left company lazy -> LazyInitializationException with OSIV off).
+        User user = userRepository.findByEmailWithCompany(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Invalid email or password"));
 
         String token = jwtService.generateToken(new UserPrincipal(user));
@@ -66,5 +68,4 @@ public class AuthServiceImpl implements AuthService {
 
         return response;
     }
-
 }

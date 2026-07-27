@@ -45,26 +45,31 @@ public class CompanyServiceImpl
 
 
         Company company =
-                Company.builder()
-                        .companyName(
+        Company.builder()
+                .companyName(
+                        request.getCompanyName()
+                )
+                .address(
+                        request.getAddress()
+                )
+                .mobile(
+                        request.getMobile()
+                )
+                .email(
+                        request.getEmail()
+                )
+                .gstNumber(
+                        request.getGstNumber()
+                )
+                .panNumber(
+                        request.getPanNumber()
+                )
+                .companyCode(
+                        generateCompanyCode(
                                 request.getCompanyName()
                         )
-                        .address(
-                                request.getAddress()
-                        )
-                        .mobile(
-                                request.getMobile()
-                        )
-                        .email(
-                                request.getEmail()
-                        )
-                        .companyCode(
-                                generateCompanyCode(
-                                        request.getCompanyName()
-                                )
-                        )
-                        .build();
-
+                )
+                .build();
 
 
         Company saved =
@@ -181,6 +186,17 @@ public class CompanyServiceImpl
         company.setEmail(
                 request.getEmail()
         );
+System.out.println("GST from request = " + request.getGstNumber());
+
+System.out.println("PAN from request = " + request.getPanNumber());
+
+        company.setGstNumber(
+        request.getGstNumber()
+);
+
+company.setPanNumber(
+        request.getPanNumber()
+);
 
 
         Company updated =
@@ -282,7 +298,15 @@ public class CompanyServiceImpl
                 .email(
                     company.getEmail()
                 )
+                
+              
+                .gstNumber(
+        company.getGstNumber()
+          )
 
+         .panNumber(
+        company.getPanNumber()
+          )
                 .active(
                     company.getActive()
                 )

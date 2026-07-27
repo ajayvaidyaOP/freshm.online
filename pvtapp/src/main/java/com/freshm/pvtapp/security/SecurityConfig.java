@@ -102,7 +102,10 @@ public class SecurityConfig {
                 .requestMatchers(
                         "/api/auth/**"
                 ).permitAll()
-
+               
+                .requestMatchers(
+        "/api/users/**"
+)             .permitAll()
 
                 .anyRequest()
                 .authenticated()
@@ -131,15 +134,14 @@ public class SecurityConfig {
                 new CorsConfiguration();
 
 
-
-        configuration.setAllowedOrigins(
-                List.of(
-                        "http://localhost:5173",
-                        "http://localhost:3000"
-                )
-        );
-
-
+configuration.setAllowedOrigins(List.of(
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://localhost:5175",
+    "http://localhost:5176",
+    "http://localhost:5178",
+    "http://localhost:3000"
+));
         configuration.setAllowedMethods(
                 List.of(
                         "GET",

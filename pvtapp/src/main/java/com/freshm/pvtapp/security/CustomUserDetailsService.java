@@ -12,7 +12,7 @@ import com.freshm.pvtapp.repository.UserRepository;
 @Service
 public class CustomUserDetailsService
         implements UserDetailsService {
-
+    
     private final UserRepository userRepository;
 
     public CustomUserDetailsService(
@@ -27,8 +27,7 @@ public class CustomUserDetailsService
     ) throws UsernameNotFoundException {
 
         User user =
-                userRepository
-                        .findByEmail(email)
+                userRepository.findByEmailWithCompany(email)
                         .orElseThrow(
                                 () ->
                                         new UsernameNotFoundException(
