@@ -216,10 +216,11 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
         String prefix = switch (type) {
             case VENDOR -> "VEN";
             case FARMER -> "FAR";
-            case PRODUCT -> "PRD";
+            case BUYER -> "BUY";
+            case PRODUCT -> "PRO";
             case PURCHASE -> "PUR";
             case INVOICE -> "INV";
-        };
+    };
 
         return companyCode
                 + "-"
