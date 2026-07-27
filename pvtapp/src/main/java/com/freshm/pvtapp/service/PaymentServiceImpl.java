@@ -52,15 +52,25 @@ public class PaymentServiceImpl implements PaymentService {
                                 )
                         );
 
-        Payment payment = new Payment();
-
-        payment.setPurchase(purchase);
-        payment.setCompany(company);
-        payment.setAmount(request.getAmount());
-        payment.setPaymentMode(PaymentMode.valueOf(request.getPaymentMode()));
-        payment.setTransactionNumber(request.getTransactionNumber());
-        payment.setPaymentDate(request.getPaymentDate());
-        payment.setRemarks(request.getRemarks());
+        Payment payment = Payment.builder()
+                .purchase(purchase)
+                .company(company)
+                .amount(request.getAmount())
+                .paymentMode(
+                        PaymentMode.valueOf(
+                                request.getPaymentMode()
+                        )
+                )
+                .transactionNumber(
+                        request.getTransactionNumber()
+                )
+                .paymentDate(
+                        request.getPaymentDate()
+                )
+                .remarks(
+                        request.getRemarks()
+                )
+                .build();
                         Payment saved = paymentRepository.save(payment);
 
         PaymentResponse response = new PaymentResponse();

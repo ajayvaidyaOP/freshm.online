@@ -1,197 +1,3 @@
-// import React, { useState } from "react";
-// import { createProduct } from "../../../services/productService";
-
-// import {
-
-// Box,
-// Card,
-// CardContent,
-// Typography,
-// Grid,
-// TextField,
-// Button
-
-// } from "@mui/material";
-
-
-
-// export default function AddArticle(){
-//     const [formData, setFormData] = useState({
-//   productName: "",
-//   articleName: "",
-//   size: "",
-//   destination: "",
-//   description: "",
-// });
-// const handleChange = (e) => {
-//   setFormData({
-//     ...formData,
-//     [e.target.name]: e.target.value,
-//   });
-// };
-
-// const handleSave = async () => {
-//   try {
-//     await createProduct(formData);
-
-//     alert("Article Saved Successfully!");
-
-//     setFormData({
-//       productName: "",
-//       articleName: "",
-//       size: "",
-//       destination: "",
-//       description: "",
-//     });
-
-//   } catch (error) {
-//     console.error(error);
-//     alert("Failed to Save Article");
-//   }
-// };
-
-
-// return(
-
-// <Box>
-
-
-// <Typography
-
-// variant="h4"
-
-// fontWeight={700}
-
-// mb={3}
-
-// >
-
-// Add Article
-
-// </Typography>
-
-
-
-
-// <Card>
-
-
-// <CardContent>
-
-
-// <Grid container spacing={3}>
-
-
-// <Grid item xs={12} md={6}>
-
-// <TextField
-//   fullWidth
-//   label="Product Name"
-//   name="productName"
-//   value={formData.productName}
-//   onChange={handleChange}
-// />
-
-// </Grid>
-
-
-
-
-// <Grid item xs={12} md={6}>
-
-
-// <TextField
-//   fullWidth
-//   label="Article Name"
-//   name="articleName"
-//   value={formData.articleName}
-//   onChange={handleChange}
-// />
-
-
-// </Grid>
-
-
-
-
-// <Grid item xs={12} md={6}>
-
-
-// <TextField
-//   fullWidth
-//   label="Size"
-//   name="size"
-//   value={formData.size}
-//   onChange={handleChange}
-// />
-
-// </Grid>
-
-
-
-
-// <Grid item xs={12} md={6}>
-
-
-// <TextField
-//   fullWidth
-//   label="Destination"
-//   name="destination"
-//   value={formData.destination}
-//   onChange={handleChange}
-// />
-
-
-// </Grid>
-
-// <Grid item xs={12}>
-//   <TextField
-//     fullWidth
-//     multiline
-//     rows={3}
-//     label="Description"
-//     name="description"
-//     value={formData.description}
-//     onChange={handleChange}
-//   />
-// </Grid>
-
-
-
-// <Grid item xs={12}>
-
-
-// <Button
-//   variant="contained"
-//   onClick={handleSave}
-// >
-//   Save Article
-// </Button>
-
-
-// </Grid>
-
-
-
-// </Grid>
-
-
-// </CardContent>
-
-
-// </Card>
-
-
-// </Box>
-
-
-// )
-
-// }
-
-
-
-
 
 import React, { useState } from "react";
 import { createProduct } from "../../../services/productService";
@@ -257,6 +63,13 @@ export default function AddArticle(){
   destination: "",
   description: "",
 });
+const [errors, setErrors] = useState({
+  productName: "",
+  articleName: "",
+  size: "",
+  destination: "",
+  description: "",
+});
 const handleChange = (e) => {
   setFormData({
     ...formData,
@@ -265,6 +78,33 @@ const handleChange = (e) => {
 };
 
 const handleSave = async () => {
+  const newErrors = {};
+
+if (!formData.productName.trim()) {
+  newErrors.productName = "Product Name is required";
+}
+
+if (!formData.articleName.trim()) {
+  newErrors.articleName = "Article Name is required";
+}
+
+if (!formData.size.trim()) {
+  newErrors.size = "Size is required";
+}
+
+if (!formData.destination.trim()) {
+  newErrors.destination = "Destination is required";
+}
+
+if (!formData.description.trim()) {
+  newErrors.description = "Description is required";
+}
+
+setErrors(newErrors);
+
+if (Object.keys(newErrors).length > 0) {
+  return;
+}
   try {
     await createProduct(formData);
 
@@ -277,6 +117,13 @@ const handleSave = async () => {
       destination: "",
       description: "",
     });
+    setErrors({
+  productName: "",
+  articleName: "",
+  size: "",
+  destination: "",
+  description: "",
+});
 
   } catch (error) {
     console.error(error);
@@ -336,10 +183,23 @@ return(
 
 <TextField
   fullWidth
+  required
   label="Product Name"
   name="productName"
   value={formData.productName}
-  onChange={handleChange}
+  error={!!errors.productName}
+  helperText={errors.productName}
+  onChange={(e) => {
+    setFormData({
+      ...formData,
+      productName: e.target.value,
+    });
+
+    setErrors({
+      ...errors,
+      productName: "",
+    });
+  }}
   sx={fieldSx}
   InputProps={{
     startAdornment: (
@@ -360,10 +220,23 @@ return(
 
 <TextField
   fullWidth
+  required
   label="Article Name"
   name="articleName"
   value={formData.articleName}
-  onChange={handleChange}
+  error={!!errors.articleName}
+  helperText={errors.articleName}
+  onChange={(e) => {
+    setFormData({
+      ...formData,
+      articleName: e.target.value,
+    });
+
+    setErrors({
+      ...errors,
+      articleName: "",
+    });
+  }}
   sx={fieldSx}
   InputProps={{
     startAdornment: (
@@ -385,10 +258,23 @@ return(
 
 <TextField
   fullWidth
+  required
   label="Size"
   name="size"
   value={formData.size}
-  onChange={handleChange}
+  error={!!errors.size}
+  helperText={errors.size}
+  onChange={(e) => {
+    setFormData({
+      ...formData,
+      size: e.target.value,
+    });
+
+    setErrors({
+      ...errors,
+      size: "",
+    });
+  }}
   sx={fieldSx}
   InputProps={{
     startAdornment: (
@@ -408,10 +294,23 @@ return(
 
 <TextField
   fullWidth
+  required
   label="Destination"
   name="destination"
   value={formData.destination}
-  onChange={handleChange}
+  error={!!errors.destination}
+  helperText={errors.destination}
+  onChange={(e) => {
+    setFormData({
+      ...formData,
+      destination: e.target.value,
+    });
+
+    setErrors({
+      ...errors,
+      destination: "",
+    });
+  }}
   sx={fieldSx}
   InputProps={{
     startAdornment: (
@@ -427,12 +326,25 @@ return(
 <Grid item xs={12}>
   <TextField
   fullWidth
+  required
   multiline
   rows={4}
   label="Description"
   name="description"
   value={formData.description}
-  onChange={handleChange}
+  error={!!errors.description}
+  helperText={errors.description}
+  onChange={(e) => {
+    setFormData({
+      ...formData,
+      description: e.target.value,
+    });
+
+    setErrors({
+      ...errors,
+      description: "",
+    });
+  }}
   sx={fieldSx}
   InputProps={{
     startAdornment: (

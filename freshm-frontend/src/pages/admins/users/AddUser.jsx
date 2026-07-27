@@ -57,7 +57,7 @@ const fieldSx = {
 
 export default function AddUser() {
   const [userCode, setUserCode] = useState("");
-
+   
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -65,48 +65,94 @@ export default function AddUser() {
     password: "",
     role: "USER",
   });
+  const [errors, setErrors] = useState({
+  fullName: "",
+  email: "",
+  mobile: "",
+  password: "",
+});
 
   const generateCode = () => {
     const code = "USR" + Math.floor(1000 + Math.random() * 9000);
     setUserCode(code);
   };
+  
+    const handleSave = async () => {
+   
+const newErrors = {};
 
-  const handleSave = async () => {
-    try {
-      const user = JSON.parse(localStorage.getItem("user"));
+if (!userCode) {
+  alert("Please generate User Code");
+  return;
+}
 
-console.log("User:", user);
+if (!formData.fullName.trim()) {
+  newErrors.fullName = "Full Name is required";
+}
 
-const response = await fetch("http://localhost:8080/api/users", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${user?.token}`,
-  },
-  body: JSON.stringify(formData),
+if (!formData.email.trim()) {
+  newErrors.email = "Email is required";
+} else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+  newErrors.email = "Please enter a valid Email Address";
+}
+
+if (!formData.mobile.trim()) {
+  newErrors.mobile = "Mobile Number is required";
+} else if (!/^\d{10}$/.test(formData.mobile)) {
+  newErrors.mobile = "Mobile Number must be 10 digits";
+}
+
+if (!formData.password.trim()) {
+  newErrors.password = "Password is required";
+}
+
+setErrors(newErrors);
+
+if (Object.keys(newErrors).length > 0) {
+  return;
+}
+  try {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    console.log("User:", user);
+
+    const response = await fetch("http://localhost:8080/api/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user?.token}`,
+      },
+      body: JSON.stringify(formData),
+    });
+
+    if (response.ok) {
+      alert("User Created Successfully");
+
+      setFormData({
+        fullName: "",
+        email: "",
+        mobile: "",
+        password: "",
+        role: "USER",
+      });
+  setErrors({
+  fullName: "",
+  email: "",
+  mobile: "",
+  password: "",
 });
-      if (response.ok) {
-        alert("User Created Successfully");
 
-        setFormData({
-          fullName: "",
-          email: "",
-          mobile: "",
-          password: "",
-          role: "USER",
-        });
-
-        setUserCode("");
-      } else {
-        const error = await response.text();
-        alert(error);
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Server Error");
+      setUserCode("");
+    } else {
+      const error = await response.text();
+      alert(error);
     }
-  };
-
+  } catch (err) {
+    console.error(err);
+    alert("Server Error");
+  }
+};
+  
   return (
     <Box
       sx={{
@@ -164,68 +210,93 @@ const response = await fetch("http://localhost:8080/api/users", {
           <Grid container spacing={3}>
             <Grid item xs={12} md={6}>
               <TextField
-                fullWidth
-                label="Full Name"
-                value={formData.fullName}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    fullName: e.target.value,
-                  })
-                }
-                sx={fieldSx}          
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Person color="action" />
-                    </InputAdornment>
-                  ),
-                }}
-              />
+  fullWidth
+  required
+  label="Full Name"
+  value={formData.fullName}
+  error={!!errors.fullName}
+  helperText={errors.fullName}
+  onChange={(e) => {
+    setFormData({
+      ...formData,
+      fullName: e.target.value,
+    });
+    
+    setErrors({
+      ...errors,
+      fullName: "",
+    });
+    
+  }}
+  sx={fieldSx}
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <Person color="action" />
+      </InputAdornment>
+    ),
+  }}
+/>
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+<TextField
+  fullWidth
+  required
+  label="Email Address"
+  value={formData.email}
+  error={!!errors.email}
+  helperText={errors.email}
+  onChange={(e) => {
+    setFormData({
+      ...formData,
+      email: e.target.value,
+    });
+
+    setErrors({
+      ...errors,
+      email: "",
+    });
+  }}
+  sx={fieldSx}
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <Email color="action" />
+      </InputAdornment>
+    ),
+  }}
+/>
             </Grid>
 
             <Grid item xs={12} md={6}>
               <TextField
-                fullWidth
-                label="Email Address"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    email: e.target.value,
-                  })
-                }
-                sx={fieldSx}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Email color="action" />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Grid>
+  fullWidth
+  required
+  label="Mobile Number"
+  value={formData.mobile}
+  error={!!errors.mobile}
+  helperText={errors.mobile}
+  onChange={(e) => {
+    setFormData({
+      ...formData,
+      mobile: e.target.value,
+    });
 
-            <Grid item xs={12} md={6}>
-              <TextField
-                fullWidth
-                label="Mobile Number"
-                value={formData.mobile}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    mobile: e.target.value,
-                  })
-                }
-                sx={fieldSx}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Phone color="action" />
-                    </InputAdornment>
-                  ),
-                }}
-              />
+    setErrors({
+      ...errors,
+      mobile: "",
+    });
+  }}
+  sx={fieldSx}
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <Phone color="action" />
+      </InputAdornment>
+    ),
+  }}
+/>
             </Grid>
 
             <Grid item xs={12} md={6}>
@@ -249,25 +320,33 @@ const response = await fetch("http://localhost:8080/api/users", {
 
             <Grid item xs={12} md={6}>
               <TextField
-                fullWidth
-                type="password"
-                label="Password"
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    password: e.target.value,
-                  })
-                }
-                sx={fieldSx}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Lock color="action" />
-                    </InputAdornment>
-                  ),
-                }}
-              />
+  fullWidth
+  required
+  type="password"
+  label="Password"
+  value={formData.password}
+  error={!!errors.password}
+  helperText={errors.password}
+  onChange={(e) => {
+    setFormData({
+      ...formData,
+      password: e.target.value,
+    });
+
+    setErrors({
+      ...errors,
+      password: "",
+    });
+  }}
+  sx={fieldSx}
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <Lock color="action" />
+      </InputAdornment>
+    ),
+  }}
+/>
             </Grid>
 
             <Grid item xs={12} md={6}>

@@ -81,11 +81,19 @@ export default function AddPurchase() {
     rate: "",
     remarks: "",
   });
+  const [errors, setErrors] = useState({
+  vendorId: "",
+  farmerId: "",
+  productId: "",
+  quantity: "",
+  rate: "",
+});
   useEffect(() => {
     loadInitialData();
   }, []);
 
   const loadInitialData = async () => {
+    
     try {
       const vendorRes = await getAllVendors();
       console.log("Vendor:", vendorRes);
@@ -113,7 +121,39 @@ export default function AddPurchase() {
       [name]: value,
     }));
   };
+  
   const handleSave = async () => {
+    const newErrors = {};
+
+if (purchaseType === "vendor" && !purchase.vendorId) {
+  newErrors.vendorId = "Vendor is required";
+}
+
+if (purchaseType === "farmer" && !purchase.farmerId) {
+  newErrors.farmerId = "Farmer is required";
+}
+
+if (!purchase.productId) {
+  newErrors.productId = "Product is required";
+}
+
+if (!purchase.quantity) {
+  newErrors.quantity = "Quantity is required";
+} else if (Number(purchase.quantity) <= 0) {
+  newErrors.quantity = "Quantity must be greater than 0";
+}
+
+if (!purchase.rate) {
+  newErrors.rate = "Rate is required";
+} else if (Number(purchase.rate) <= 0) {
+  newErrors.rate = "Rate must be greater than 0";
+}
+
+setErrors(newErrors);
+
+if (Object.keys(newErrors).length > 0) {
+  return;
+}
     try {
 
       const payload = {
@@ -155,7 +195,13 @@ export default function AddPurchase() {
         rate: "",
         remarks: "",
       });
-
+setErrors({
+  vendorId: "",
+  farmerId: "",
+  productId: "",
+  quantity: "",
+  rate: "",
+});
     } catch (error) {
 
       console.error(error);
@@ -206,7 +252,21 @@ export default function AddPurchase() {
                 fullWidth
                 label="Purchase From"
                 value={purchaseType}
-                onChange={(e) => setPurchaseType(e.target.value)}
+                onChange={(e) => {
+  setPurchaseType(e.target.value);
+
+  setPurchase({
+    ...purchase,
+    vendorId: "",
+    farmerId: "",
+  });
+
+  setErrors({
+    ...errors,
+    vendorId: "",
+    farmerId: "",
+  });
+}}
                 sx={fieldSx}
                 InputProps={{
                   startAdornment: (
@@ -234,34 +294,40 @@ export default function AddPurchase() {
               <Grid item xs={12} md={6}>
 
                 <TextField
-                  select
-                  fullWidth
-                  label="Select Vendor"
-                  name="vendorId"
-                  value={purchase.vendorId}
-                  onChange={handleChange}
-                  sx={fieldSx}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Store color="action" />
-                      </InputAdornment>
-                    ),
-                  }}
-                >
+  select
+  fullWidth
+  required
+  label="Select Vendor"
+  name="vendorId"
+  value={purchase.vendorId}
+  error={!!errors.vendorId}
+  helperText={errors.vendorId}
+  onChange={(e) => {
+    setPurchase({
+      ...purchase,
+      vendorId: e.target.value,
+    });
 
-                  {vendors.map((vendor) => (
-
-                    <MenuItem
-                      key={vendor.id}
-                      value={vendor.id}
-                    >
-                      {vendor.vendorName}
-                    </MenuItem>
-
-                  ))}
-
-                </TextField>
+    setErrors({
+      ...errors,
+      vendorId: "",
+    });
+  }}
+  sx={fieldSx}
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <Store color="action" />
+      </InputAdornment>
+    ),
+  }}
+>
+  {vendors.map((vendor) => (
+    <MenuItem key={vendor.id} value={vendor.id}>
+      {vendor.vendorName}
+    </MenuItem>
+  ))}
+</TextField>
 
               </Grid>
 
@@ -274,34 +340,40 @@ export default function AddPurchase() {
               <Grid item xs={12} md={6}>
 
                 <TextField
-                  select
-                  fullWidth
-                  label="Select Farmer"
-                  name="farmerId"
-                  value={purchase.farmerId}
-                  onChange={handleChange}
-                  sx={fieldSx}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Agriculture color="action" />
-                      </InputAdornment>
-                    ),
-                  }}
-                >
+  select
+  fullWidth
+  required
+  label="Select Farmer"
+  name="farmerId"
+  value={purchase.farmerId}
+  error={!!errors.farmerId}
+  helperText={errors.farmerId}
+  onChange={(e) => {
+    setPurchase({
+      ...purchase,
+      farmerId: e.target.value,
+    });
 
-                  {farmers.map((farmer) => (
-
-                    <MenuItem
-                      key={farmer.id}
-                      value={farmer.id}
-                    >
-                      {farmer.farmerName}
-                    </MenuItem>
-
-                  ))}
-
-                </TextField>
+    setErrors({
+      ...errors,
+      farmerId: "",
+    });
+  }}
+  sx={fieldSx}
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <Agriculture color="action" />
+      </InputAdornment>
+    ),
+  }}
+>
+  {farmers.map((farmer) => (
+    <MenuItem key={farmer.id} value={farmer.id}>
+      {farmer.farmerName}
+    </MenuItem>
+  ))}
+</TextField>
 
               </Grid>
 
@@ -312,76 +384,113 @@ export default function AddPurchase() {
             <Grid item xs={12} md={6}>
 
               <TextField
-                select
-                fullWidth
-                label="Select Product"
-                name="productId"
-                value={purchase.productId}
-                onChange={handleChange}
-                sx={fieldSx}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Inventory2 color="action" />
-                    </InputAdornment>
-                  ),
-                }}
-              >
+  select
+  fullWidth
+  required
+  label="Select Product"
+  name="productId"
+  value={purchase.productId}
+  error={!!errors.productId}
+  helperText={errors.productId}
+  onChange={(e) => {
+    setPurchase({
+      ...purchase,
+      productId: e.target.value,
+    });
 
-                {products.map((product) => (
-
-                  <MenuItem
-                    key={product.id}
-                    value={product.id}
-                  >
-                    {product.productName}
-                  </MenuItem>
-
-                ))}
-
-              </TextField>
-
+    setErrors({
+      ...errors,
+      productId: "",
+    });
+  }}
+  sx={fieldSx}
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <Inventory2 color="action" />
+      </InputAdornment>
+    ),
+  }}
+>
+  {products.map((product) => (
+    <MenuItem key={product.id} value={product.id}>
+      {product.productName}
+    </MenuItem>
+  ))}
+</TextField>
             </Grid>
             {/* Quantity */}
 
             <Grid item xs={12} md={4}>
               <TextField
-                fullWidth
-                type="number"
-                label="Quantity"
-                name="quantity"
-                value={purchase.quantity}
-                onChange={handleChange}
-                sx={fieldSx}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Numbers color="action" />
-                    </InputAdornment>
-                  ),
-                }}
-              />
+  fullWidth
+  required
+  type="number"
+  inputProps={{
+  min: 1,
+}}
+  label="Quantity"
+  name="quantity"
+  value={purchase.quantity}
+  error={!!errors.quantity}
+  helperText={errors.quantity}
+  onChange={(e) => {
+    setPurchase({
+      ...purchase,
+      quantity: e.target.value,
+    });
+
+    setErrors({
+      ...errors,
+      quantity: "",
+    });
+  }}
+  sx={fieldSx}
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <Numbers color="action" />
+      </InputAdornment>
+    ),
+  }}
+/>
             </Grid>
 
             {/* Rate */}
 
             <Grid item xs={12} md={4}>
               <TextField
-                fullWidth
-                type="number"
-                label="Rate"
-                name="rate"
-                value={purchase.rate}
-                onChange={handleChange}
-                sx={fieldSx}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <CurrencyRupee color="action" />
-                    </InputAdornment>
-                  ),
-                }}
-              />
+  fullWidth
+  required
+  type="number"
+  inputProps={{
+  min: 1,
+}}
+  label="Rate"
+  name="rate"
+  value={purchase.rate}
+  error={!!errors.rate}
+  helperText={errors.rate}
+  onChange={(e) => {
+    setPurchase({
+      ...purchase,
+      rate: e.target.value,
+    });
+
+    setErrors({
+      ...errors,
+      rate: "",
+    });
+  }}
+  sx={fieldSx}
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <CurrencyRupee color="action" />
+      </InputAdornment>
+    ),
+  }}
+/>
             </Grid>
 
             {/* Total Amount */}

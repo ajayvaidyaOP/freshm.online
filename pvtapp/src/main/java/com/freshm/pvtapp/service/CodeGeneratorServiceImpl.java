@@ -213,15 +213,14 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
             CodeType type,
             Long number) {
 
-    	String prefix = switch (type) {
-        case VENDOR   -> "VEN";
-        case FARMER   -> "FAR";
-        case PRODUCT  -> "PRD";
-        case PURCHASE -> "PUR";
-        case INVOICE  -> "INV";
-        // ... your existing cases ...
-        default       -> "GEN";
-    };
+        String prefix = switch (type) {
+            case VENDOR -> "VEN";
+            case FARMER -> "FAR";
+            case PRODUCT -> "PRD";
+            case PURCHASE -> "PUR";
+            case INVOICE -> "INV";
+        };
+
         return companyCode
                 + "-"
                 + prefix

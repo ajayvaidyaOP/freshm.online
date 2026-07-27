@@ -15,14 +15,26 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "payments")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Payment extends BaseEntity {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
 
     /**
      * Purchase Reference
@@ -34,6 +46,7 @@ public class Payment extends BaseEntity {
     )
     private Purchase purchase;
 
+
     /**
      * Company Isolation
      */
@@ -44,11 +57,13 @@ public class Payment extends BaseEntity {
     )
     private Company company;
 
+
     /**
      * Payment Amount
      */
     @Column(nullable = false)
     private Double amount;
+
 
     /**
      * Cash / UPI / Net Banking
@@ -57,11 +72,13 @@ public class Payment extends BaseEntity {
     @Column(nullable = false)
     private PaymentMode paymentMode;
 
+
     /**
      * UPI Transaction ID
      * Bank Reference Number
      */
     private String transactionNumber;
+
 
     /**
      * Payment Date
@@ -69,91 +86,11 @@ public class Payment extends BaseEntity {
     @Column(nullable = false)
     private LocalDate paymentDate;
 
+
     /**
      * Extra Notes
      */
     @Column(length = 500)
     private String remarks;
 
-    // Default Constructor
-    public Payment() {
-    }
-
-    // Parameterized Constructor
-    public Payment(Long id, Purchase purchase, Company company, Double amount,
-                   PaymentMode paymentMode, String transactionNumber,
-                   LocalDate paymentDate, String remarks) {
-        this.id = id;
-        this.purchase = purchase;
-        this.company = company;
-        this.amount = amount;
-        this.paymentMode = paymentMode;
-        this.transactionNumber = transactionNumber;
-        this.paymentDate = paymentDate;
-        this.remarks = remarks;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Purchase getPurchase() {
-        return purchase;
-    }
-
-    public void setPurchase(Purchase purchase) {
-        this.purchase = purchase;
-    }
-
-    public Company getCompany() {
-        return company;
-    }
-
-    public void setCompany(Company company) {
-        this.company = company;
-    }
-
-    public Double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(Double amount) {
-        this.amount = amount;
-    }
-
-    public PaymentMode getPaymentMode() {
-        return paymentMode;
-    }
-
-    public void setPaymentMode(PaymentMode paymentMode) {
-        this.paymentMode = paymentMode;
-    }
-
-    public String getTransactionNumber() {
-        return transactionNumber;
-    }
-
-    public void setTransactionNumber(String transactionNumber) {
-        this.transactionNumber = transactionNumber;
-    }
-
-    public LocalDate getPaymentDate() {
-        return paymentDate;
-    }
-
-    public void setPaymentDate(LocalDate paymentDate) {
-        this.paymentDate = paymentDate;
-    }
-
-    public String getRemarks() {
-        return remarks;
-    }
-
-    public void setRemarks(String remarks) {
-        this.remarks = remarks;
-    }
 }

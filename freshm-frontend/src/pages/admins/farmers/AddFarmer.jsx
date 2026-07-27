@@ -101,6 +101,14 @@ export default function AddFarmer() {
     const [panFile, setPanFile] = useState(null);
     const [bankPassbookFile, setBankPassbookFile] = useState(null);
     const [vendors, setVendors] = useState([]);
+    const [errors, setErrors] = useState({
+  farmerName: "",
+  vendorId: "",
+  mobile: "",
+  aadharNumber: "",
+  panNumber: "",
+  address: "",
+});
 useEffect(() => {
     const loadVendors = async () => {
         try {
@@ -121,6 +129,45 @@ useEffect(() => {
     };
 
     const handleSubmit = async () => {
+        const newErrors = {};
+
+if (!formData.farmerName.trim()) {
+  newErrors.farmerName = "Farmer Name is required";
+}
+
+if (!formData.vendorId) {
+  newErrors.vendorId = "Vendor is required";
+}
+
+if (!formData.mobile.trim()) {
+  newErrors.mobile = "Mobile Number is required";
+} else if (!/^\d{10}$/.test(formData.mobile)) {
+  newErrors.mobile = "Mobile Number must be 10 digits";
+}
+
+if (!formData.aadharNumber.trim()) {
+  newErrors.aadharNumber = "Aadhar Number is required";
+} else if (!/^\d{12}$/.test(formData.aadharNumber)) {
+  newErrors.aadharNumber = "Aadhar Number must be 12 digits";
+}
+
+if (!formData.panNumber.trim()) {
+  newErrors.panNumber = "PAN Number is required";
+} else if (
+  !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(formData.panNumber.toUpperCase())
+) {
+  newErrors.panNumber = "Invalid PAN Number";
+}
+
+if (!formData.address.trim()) {
+  newErrors.address = "Address is required";
+}
+
+setErrors(newErrors);
+
+if (Object.keys(newErrors).length > 0) {
+  return;
+}
         try {
             const data = new FormData();
 
@@ -155,6 +202,31 @@ useEffect(() => {
 
             alert("Farmer Added Successfully");
             console.log(response.data);
+            setFormData({
+  farmerName: "",
+  mobile: "",
+  email: "",
+  address: "",
+  aadharNumber: "",
+  panNumber: "",
+  bankName: "",
+  accountNumber: "",
+  ifscCode: "",
+  vendorId: "",
+});
+
+setErrors({
+  farmerName: "",
+  vendorId: "",
+  mobile: "",
+  aadharNumber: "",
+  panNumber: "",
+  address: "",
+});
+
+setAadharFile(null);
+setPanFile(null);
+setBankPassbookFile(null);
 
         } catch (error) {
             console.error(error);
@@ -224,111 +296,203 @@ useEffect(() => {
                     <Grid container spacing={3}>
                         <Grid item xs={12} md={6}>
                             <TextField
-                            fullWidth
-                            label="Farmer Name"
-                             name="farmerName"
-                            value={formData.farmerName}
-                            onChange={handleChange}
-                              sx={fieldSx}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <Person color="action" />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                            />
+  fullWidth
+  required
+  label="Farmer Name"
+  name="farmerName"
+  value={formData.farmerName}
+  error={!!errors.farmerName}
+  helperText={errors.farmerName}
+  onChange={(e) => {
+    setFormData({
+      ...formData,
+      farmerName: e.target.value,
+    });
+
+    setErrors({
+      ...errors,
+      farmerName: "",
+    });
+  }}
+  sx={fieldSx}
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <Person color="action" />
+      </InputAdornment>
+    ),
+  }}
+/>
                         </Grid>
                       <Grid item xs={12} md={6}>
-    <FormControl fullWidth>
-        <InputLabel>Vendor</InputLabel>
+   <FormControl fullWidth error={!!errors.vendorId}>
+  <InputLabel>Vendor</InputLabel>
 
-        <Select
-            name="vendorId"
-            value={formData.vendorId}
-            label="Vendor"
-            onChange={handleChange}
-        >
-            {vendors.map((vendor) => (
-                <MenuItem key={vendor.id} value={vendor.id}>
-                    {vendor.vendorName}
-                </MenuItem>
-            ))}
-        </Select>
-    </FormControl>
+  <Select
+    name="vendorId"
+    value={formData.vendorId}
+    label="Vendor"
+    onChange={(e) => {
+      setFormData({
+        ...formData,
+        vendorId: e.target.value,
+      });
+
+      setErrors({
+        ...errors,
+        vendorId: "",
+      });
+    }}
+  >
+    {vendors.map((vendor) => (
+      <MenuItem key={vendor.id} value={vendor.id}>
+        {vendor.vendorName}
+      </MenuItem>
+    ))}
+  </Select>
+
+  {errors.vendorId && (
+    <Typography
+      sx={{
+        color: "#d32f2f",
+        fontSize: 12,
+        mt: 0.5,
+        ml: 2,
+      }}
+    >
+      {errors.vendorId}
+    </Typography>
+  )}
+</FormControl>
 </Grid>
                         <Grid item xs={12} md={6}>
-                            <TextField
-    fullWidth
-    label="Mobile Number"
-    name="mobile"
-    value={formData.mobile}
-    onChange={handleChange}
-    sx={fieldSx}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <Phone color="action" />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                            />
+                           <TextField
+  fullWidth
+  required
+  label="Mobile Number"
+  name="mobile"
+  value={formData.mobile}
+  error={!!errors.mobile}
+  helperText={errors.mobile}
+  onChange={(e) => {
+    const value = e.target.value.replace(/\D/g, "").slice(0, 10);
+
+    setFormData({
+      ...formData,
+      mobile: value,
+    });
+
+    setErrors({
+      ...errors,
+      mobile: "",
+    });
+  }}
+  sx={fieldSx}
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <Phone color="action" />
+      </InputAdornment>
+    ),
+  }}
+/>
                         </Grid>
 
                         <Grid item xs={12} md={6}>
                             <TextField
-    fullWidth
-    label="Aadhar Number"
-    name="aadharNumber"
-    value={formData.aadharNumber}
-    onChange={handleChange}
-    sx={fieldSx}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <CreditCard color="action" />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                            />
+  fullWidth
+  required
+  label="Aadhar Number"
+  name="aadharNumber"
+  value={formData.aadharNumber}
+  error={!!errors.aadharNumber}
+  helperText={errors.aadharNumber}
+  onChange={(e) => {
+    const value = e.target.value.replace(/\D/g, "").slice(0, 12);
+
+    setFormData({
+      ...formData,
+      aadharNumber: value,
+    });
+
+    setErrors({
+      ...errors,
+      aadharNumber: "",
+    });
+  }}
+  sx={fieldSx}
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <CreditCard color="action" />
+      </InputAdornment>
+    ),
+  }}
+/>
                         </Grid>
 
                         <Grid item xs={12} md={6}>
                             <TextField
-    fullWidth
-    label="PAN Number"
-    name="panNumber"
-    value={formData.panNumber}
-    onChange={handleChange}
-    sx={fieldSx}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <CreditCard color="action" />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                            />
+  fullWidth
+  required
+  label="PAN Number"
+  name="panNumber"
+  value={formData.panNumber}
+  error={!!errors.panNumber}
+  helperText={errors.panNumber}
+  onChange={(e) => {
+    setFormData({
+      ...formData,
+      panNumber: e.target.value.toUpperCase(),
+    });
+
+    setErrors({
+      ...errors,
+      panNumber: "",
+    });
+  }}
+  sx={fieldSx}
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <CreditCard color="action" />
+      </InputAdornment>
+    ),
+  }}
+/>
                         </Grid>
 
                         <Grid item xs={12}>
-                            <TextField
-    fullWidth
-    multiline
-    rows={3}
-    label="Address"
-    name="address"
-    value={formData.address}
-    onChange={handleChange}
-    sx={fieldSx}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <Home color="action" />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                            />
+<TextField
+  fullWidth
+  required
+  multiline
+  rows={3}
+  label="Address"
+  name="address"
+  value={formData.address}
+  error={!!errors.address}
+  helperText={errors.address}
+  onChange={(e) => {
+    setFormData({
+      ...formData,
+      address: e.target.value,
+    });
+
+    setErrors({
+      ...errors,
+      address: "",
+    });
+  }}
+  sx={fieldSx}
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <Home color="action" />
+      </InputAdornment>
+    ),
+  }}
+/>
                         </Grid>
 
                         <Grid item xs={12}>

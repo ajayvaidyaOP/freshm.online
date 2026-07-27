@@ -71,11 +71,16 @@ export default function LetterHeadSettings() {
 
   const handleChange = (e) => {
     setFormData({
+      
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
-
+const [errors, setErrors] = useState({
+  companyLogoUrl: "",
+  headerTitle: "",
+  footerText: "",
+});
   const loadLetterHead = async () => {
 
     
@@ -110,6 +115,25 @@ export default function LetterHeadSettings() {
 
 
 const handleSave = async () => {
+  const newErrors = {};
+
+if (!formData.companyLogoUrl.trim()) {
+  newErrors.companyLogoUrl = "Company Logo URL is required";
+}
+
+if (!formData.headerTitle.trim()) {
+  newErrors.headerTitle = "Header Title is required";
+}
+
+if (!formData.footerText.trim()) {
+  newErrors.footerText = "Footer Text is required";
+}
+
+setErrors(newErrors);
+
+if (Object.keys(newErrors).length > 0) {
+  return;
+}
   try {
     setLoading(true);
 
@@ -134,6 +158,16 @@ const handleSave = async () => {
         message: "Letter Head saved successfully",
       });
     }
+    setErrors({
+
+  companyLogoUrl: "",
+
+  headerTitle: "",
+
+  footerText: "",
+
+});
+
   } catch (error) {
     console.error(error);
 
@@ -142,6 +176,7 @@ const handleSave = async () => {
       severity: "error",
       message: "Failed to save Letter Head",
     });
+    
   } finally {
     setLoading(false);
   }
@@ -203,13 +238,21 @@ useEffect(() => {
 
           <TextField
   fullWidth
+  required
   label="Company Logo URL"
   name="companyLogoUrl"
   value={formData.companyLogoUrl}
-  onChange={handleChange}
+  error={!!errors.companyLogoUrl}
+  helperText={errors.companyLogoUrl}
+  onChange={(e) => {
+    handleChange(e);
+    setErrors({
+      ...errors,
+      companyLogoUrl: "",
+    });
+  }}
   margin="normal"
 />
-
 
 
 
@@ -218,7 +261,16 @@ useEffect(() => {
   label="Header Title"
   name="headerTitle"
   value={formData.headerTitle}
-  onChange={handleChange}
+  required
+error={!!errors.headerTitle}
+helperText={errors.headerTitle}
+onChange={(e) => {
+  handleChange(e);
+  setErrors({
+    ...errors,
+    headerTitle: "",
+  });
+}}
   margin="normal"
 />
 
@@ -228,7 +280,16 @@ useEffect(() => {
   label="Footer Text"
   name="footerText"
   value={formData.footerText}
-  onChange={handleChange}
+  required
+error={!!errors.footerText}
+helperText={errors.footerText}
+onChange={(e) => {
+  handleChange(e);
+  setErrors({
+    ...errors,
+    footerText: "",
+  });
+}}
   margin="normal"
 />
 

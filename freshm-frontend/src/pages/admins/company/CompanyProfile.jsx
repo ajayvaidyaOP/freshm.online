@@ -41,7 +41,14 @@ const [company, setCompany] = useState({
   email: "",
   address: "",
 });
-
+const [errors, setErrors] = useState({
+  companyName: "",
+  gstNumber: "",
+  panNumber: "",
+  mobile: "",
+  email: "",
+  address: "",
+});
 useEffect(() => {
   loadCompany();
 }, []);
@@ -63,8 +70,53 @@ const handleChange = (e) => {
 };
 
 const handleSave = async () => {
+  const newErrors = {};
+
+if (!company.companyName.trim()) {
+  newErrors.companyName = "Company Name is required";
+}
+
+if (!company.gstNumber.trim()) {
+  newErrors.gstNumber = "GST Number is required";
+}
+
+if (!company.panNumber.trim()) {
+  newErrors.panNumber = "PAN Number is required";
+}
+
+if (!company.mobile.trim()) {
+  newErrors.mobile = "Mobile Number is required";
+} else if (!/^[0-9]{10}$/.test(company.mobile)) {
+  newErrors.mobile = "Enter valid Mobile Number";
+}
+
+if (!company.email.trim()) {
+  newErrors.email = "Email is required";
+} else if (
+  !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(company.email)
+) {
+  newErrors.email = "Enter valid Email";
+}
+
+if (!company.address.trim()) {
+  newErrors.address = "Address is required";
+}
+
+setErrors(newErrors);
+
+if (Object.keys(newErrors).length > 0) {
+  return;
+}
   try {
     await api.put("/company/1", company);
+    setErrors({
+  companyName: "",
+  gstNumber: "",
+  panNumber: "",
+  mobile: "",
+  email: "",
+  address: "",
+});
     alert("Company details updated successfully.");
   } catch (error) {
     console.error(error);
@@ -129,7 +181,17 @@ const handleSave = async () => {
   label="Company Name"
   name="companyName"
   value={company.companyName}
-  onChange={handleChange}
+  required
+  error={!!errors.companyName}
+  helperText={errors.companyName}
+  onChange={(e) => {
+    handleChange(e);
+
+    setErrors({
+      ...errors,
+      companyName: "",
+    });
+  }}
 />
 
             </Grid>
@@ -143,7 +205,17 @@ const handleSave = async () => {
   label="GST Number"
   name="gstNumber"
   value={company.gstNumber}
-  onChange={handleChange}
+  required
+error={!!errors.gstNumber}
+helperText={errors.gstNumber}
+onChange={(e) => {
+  handleChange(e);
+setErrors({
+  ...errors,
+  gstNumber: "",
+});
+  
+}}
 />
             </Grid>
 
@@ -157,7 +229,17 @@ const handleSave = async () => {
   label="PAN Number"
   name="panNumber"
   value={company.panNumber}
-  onChange={handleChange}
+  required
+error={!!errors.panNumber}
+helperText={errors.panNumber}
+  onChange={(e) => {
+  handleChange(e);
+
+  setErrors({
+    ...errors,
+    panNumber: "",
+  });
+}}
 />
             </Grid>
 
@@ -170,7 +252,18 @@ const handleSave = async () => {
     label="Mobile Number"
     name="mobile"
     value={company.mobile}
-    onChange={handleChange}
+    required
+error={!!errors.mobile}
+helperText={errors.mobile}
+onChange={(e) => {
+  handleChange(e);
+
+  setErrors({
+    ...errors,
+    mobile: "",
+  });
+}}
+    
   />
 </Grid>
 
@@ -180,7 +273,17 @@ const handleSave = async () => {
     label="Email"
     name="email"
     value={company.email}
-    onChange={handleChange}
+    required
+error={!!errors.email}
+helperText={errors.email}
+onChange={(e) => {
+  handleChange(e);
+
+  setErrors({
+    ...errors,
+    email: "",
+  });
+}}
   />
 </Grid>
 
@@ -198,7 +301,17 @@ const handleSave = async () => {
   label="Company Address"
   name="address"
   value={company.address}
-  onChange={handleChange}
+  required
+  error={!!errors.address}
+  helperText={errors.address}
+  onChange={(e) => {
+    handleChange(e);
+
+    setErrors({
+      ...errors,
+      address: "",
+    });
+  }}
 />
 </Grid>
 

@@ -1,3 +1,54 @@
+// package com.freshm.pvtapp.service;
+
+// import java.util.List;
+
+// import org.springframework.stereotype.Service;
+
+// import com.freshm.pvtapp.dto.LetterHeadRequest;
+// import com.freshm.pvtapp.dto.LetterHeadResponse;
+// import com.freshm.pvtapp.entity.LetterHead;
+// import com.freshm.pvtapp.repository.LetterHeadRepository;
+
+// import jakarta.transaction.Transactional;
+
+// @Service
+// public class LetterHeadServiceImpl implements LetterHeadService {
+
+//     private final LetterHeadRepository letterHeadRepository;
+
+//     public LetterHeadServiceImpl(LetterHeadRepository letterHeadRepository) {
+//         this.letterHeadRepository = letterHeadRepository;
+//     }
+
+//     @Override
+//     @Transactional
+//     public LetterHeadResponse createLetterHead(LetterHeadRequest request) {
+//         return null;
+//     }
+
+//     @Override
+//     public List<LetterHeadResponse> getAllLetterHeads() {
+//         return null;
+//     }
+
+//     @Override
+//     public LetterHeadResponse getLetterHeadById(Long id) {
+//         return null;
+//     }
+
+//     @Override
+//     @Transactional
+//     public LetterHeadResponse updateLetterHead(Long id, LetterHeadRequest request) {
+//         return null;
+//     }
+
+//     @Override
+//     @Transactional
+//     public void deleteLetterHead(Long id) {
+
+//     }
+// }
+
 package com.freshm.pvtapp.service;
 
 import java.util.List;
@@ -6,106 +57,90 @@ import org.springframework.stereotype.Service;
 
 import com.freshm.pvtapp.dto.LetterHeadRequest;
 import com.freshm.pvtapp.dto.LetterHeadResponse;
-import com.freshm.pvtapp.entity.Company;
 import com.freshm.pvtapp.entity.LetterHead;
-import com.freshm.pvtapp.exception.ResourceNotFoundException;
 import com.freshm.pvtapp.repository.LetterHeadRepository;
-import com.freshm.pvtapp.security.SecurityUtil;
 
 import jakarta.transaction.Transactional;
 
-/**
- * FIX: every operation is now scoped to the current company.
- * Create/update always attaches the tenant, and reads only ever
- * return this company's letterhead. Saving with a blank title no
- * longer 500s (column is nullable now).
- */
 @Service
 public class LetterHeadServiceImpl implements LetterHeadService {
 
     private final LetterHeadRepository letterHeadRepository;
-    private final SecurityUtil securityUtil;
 
-    public LetterHeadServiceImpl(
-            LetterHeadRepository letterHeadRepository,
-            SecurityUtil securityUtil) {
+    public LetterHeadServiceImpl(LetterHeadRepository letterHeadRepository) {
         this.letterHeadRepository = letterHeadRepository;
-        this.securityUtil = securityUtil;
     }
 
     @Override
     @Transactional
     public LetterHeadResponse createLetterHead(LetterHeadRequest request) {
 
-        Company company = securityUtil.getCurrentCompany();
+        LetterHead letterHead = LetterHead.builder()
+                .companyLogoUrl(request.getCompanyLogoUrl())
+                .headerTitle(request.getHeaderTitle())
+                .footerText(request.getFooterText())
+                .active(true)
+                .build();
 
-        // one letterhead per company: reuse the existing row if present
-        LetterHead letterHead = letterHeadRepository
-                .findFirstByCompanyId(company.getId())
-                .orElseGet(LetterHead::new);
+        LetterHead saved = letterHeadRepository.save(letterHead);
 
-        letterHead.setCompany(company);
-        letterHead.setCompanyLogoUrl(request.getCompanyLogoUrl());
-        letterHead.setHeaderTitle(request.getHeaderTitle());
-        letterHead.setFooterText(request.getFooterText());
-        letterHead.setActive(true);
-
-        return mapToResponse(letterHeadRepository.save(letterHead));
+        return mapToResponse(saved);
     }
 
     @Override
     public List<LetterHeadResponse> getAllLetterHeads() {
-        Company company = securityUtil.getCurrentCompany();
-        return letterHeadRepository
-                .findFirstByCompanyId(company.getId())
-                .map(lh -> List.of(mapToResponse(lh)))
-                .orElseGet(List::of);
+
+        return letterHeadRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 
     @Override
     public LetterHeadResponse getLetterHeadById(Long id) {
-        Company company = securityUtil.getCurrentCompany();
-        LetterHead lh = letterHeadRepository.findById(id)
-                .filter(x -> x.getCompany() != null
-                        && x.getCompany().getId().equals(company.getId()))
-                .orElseThrow(() -> new ResourceNotFoundException("Letter head not found"));
-        return mapToResponse(lh);
+
+        LetterHead letterHead = letterHeadRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Letter Head not found"));
+
+        return mapToResponse(letterHead);
     }
 
     @Override
     @Transactional
     public LetterHeadResponse updateLetterHead(Long id, LetterHeadRequest request) {
-        Company company = securityUtil.getCurrentCompany();
-        LetterHead lh = letterHeadRepository.findById(id)
-                .filter(x -> x.getCompany() != null
-                        && x.getCompany().getId().equals(company.getId()))
-                .orElseThrow(() -> new ResourceNotFoundException("Letter head not found"));
 
-        lh.setCompanyLogoUrl(request.getCompanyLogoUrl());
-        lh.setHeaderTitle(request.getHeaderTitle());
-        lh.setFooterText(request.getFooterText());
+        LetterHead letterHead = letterHeadRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Letter Head not found"));
 
-        return mapToResponse(letterHeadRepository.save(lh));
+        letterHead.setCompanyLogoUrl(request.getCompanyLogoUrl());
+        letterHead.setHeaderTitle(request.getHeaderTitle());
+        letterHead.setFooterText(request.getFooterText());
+
+        LetterHead updated = letterHeadRepository.save(letterHead);
+
+        return mapToResponse(updated);
     }
 
     @Override
     @Transactional
     public void deleteLetterHead(Long id) {
-        Company company = securityUtil.getCurrentCompany();
-        LetterHead lh = letterHeadRepository.findById(id)
-                .filter(x -> x.getCompany() != null
-                        && x.getCompany().getId().equals(company.getId()))
-                .orElseThrow(() -> new ResourceNotFoundException("Letter head not found"));
-        letterHeadRepository.delete(lh);
+
+        LetterHead letterHead = letterHeadRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Letter Head not found"));
+
+        letterHead.setActive(false);
+
+        letterHeadRepository.save(letterHead);
     }
 
-    private LetterHeadResponse mapToResponse(LetterHead lh) {
-        LetterHeadResponse r = new LetterHeadResponse();
-        r.setId(lh.getId());
-        r.setCompanyLogoUrl(lh.getCompanyLogoUrl());
-        r.setHeaderTitle(lh.getHeaderTitle());
-        r.setFooterText(lh.getFooterText());
-        r.setActive(lh.getActive());
-        return r;
+    private LetterHeadResponse mapToResponse(LetterHead letterHead) {
+
+        return LetterHeadResponse.builder()
+                .id(letterHead.getId())
+                .companyLogoUrl(letterHead.getCompanyLogoUrl())
+                .headerTitle(letterHead.getHeaderTitle())
+                .footerText(letterHead.getFooterText())
+                .active(letterHead.getActive())
+                .build();
     }
 }
