@@ -31,6 +31,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import BusinessIcon from "@mui/icons-material/Business";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import ReceiptLongRoundedIcon from "@mui/icons-material/ReceiptLongRounded";
 
 const menuItems = [
   {
@@ -68,6 +69,8 @@ const menuItems = [
     path: "/admin/purchase",
     icon: <ShoppingCartIcon />,
   },
+
+  { title: "Sales", path: "/admin/sales", icon: <ReceiptLongRoundedIcon /> },
 
   {
     title: "Payments",

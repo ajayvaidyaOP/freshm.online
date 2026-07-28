@@ -4,9 +4,11 @@ public enum CodeType {
 
     VENDOR,
     FARMER,
-    BUYER,
     PRODUCT,
     PURCHASE,
-    INVOICE
+    INVOICE,
 
+    // added — required by Buyer + Sale modules
+    BUYER,
+    SALE
 }

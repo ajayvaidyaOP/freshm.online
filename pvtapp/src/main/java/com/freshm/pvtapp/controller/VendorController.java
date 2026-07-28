@@ -56,7 +56,7 @@ public class VendorController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<VendorResponse> getVendorById(
-            @PathVariable Long id
+            @PathVariable("id") Long id
     ) {
 
         return ResponseEntity.ok(
@@ -69,7 +69,7 @@ public class VendorController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<VendorResponse> updateVendor(
-            @PathVariable Long id,
+            @PathVariable("id") Long id,
             @RequestBody VendorRequest request
     ) {
 
@@ -86,7 +86,7 @@ public class VendorController {
      */
     @PutMapping("/{id}/status")
     public ResponseEntity<String> changeStatus(
-            @PathVariable Long id,
+            @PathVariable("id") Long id,
             @RequestParam Boolean status
     ) {
 
@@ -105,7 +105,7 @@ public class VendorController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteVendor(
-            @PathVariable Long id
+            @PathVariable("id") Long id
     ) {
 
         vendorService.deleteVendor(id);

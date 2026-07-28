@@ -7,7 +7,7 @@ import { useTheme } from "@mui/material/styles";
 import { useNavigate, useLocation } from "react-router-dom";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
-import { palette, sprout } from "../../theme/theme";
+import { palette } from "../../theme/theme";
 import { Wordmark, BrandFonts } from "../../brand/Brand";
 
 const RAIL = 268;

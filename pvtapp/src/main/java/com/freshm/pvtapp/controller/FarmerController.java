@@ -71,7 +71,7 @@ public class FarmerController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<FarmerResponse> getFarmerById(
-            @PathVariable Long id
+            @PathVariable("id") Long id
     ) {
 
         return ResponseEntity.ok(
