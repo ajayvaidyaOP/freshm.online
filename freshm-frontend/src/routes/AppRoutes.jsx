@@ -1,105 +1,977 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
+import {
+  BrowserRouter,
+  Routes,
+  Route
+} from "react-router-dom";
+
 
 // Auth
 import Login from "../pages/auth/Login";
 import Unauthorized from "../pages/auth/Unauthorized";
 import ProtectedRoute from "../pages/auth/ProtectedRoute";
 
+
 // Layouts
 import AdminLayout from "../layouts/AdminLayout";
 import SuperAdminLayout from "../layouts/SuperAdminLayout";
 import UserLayout from "../layouts/UserLayout";
 
+
+
 // Super Admin
-import SuperAdminDashboard from "../pages/super-admin/SuperAdminDashboard";
-import Companies from "../pages/super-admin/Companies";
-import Admins from "../pages/super-admin/Admins";
-import PlatformSettings from "../pages/super-admin/PlatformSettings";
+import SuperAdminDashboard 
+from "../pages/super-admin/SuperAdminDashboard";
 
-// Admin
-import Dashboard from "../pages/admins/Dashboard";
-import Users from "../pages/admins/users/Users";
-import AddUser from "../pages/admins/users/AddUser";
-import Vendors from "../pages/admins/vendors/Vendors";
-import AddVendor from "../pages/admins/vendors/AddVendor";
-import Farmers from "../pages/admins/farmers/Farmers";
-import AddFarmer from "../pages/admins/farmers/AddFarmer";
-import Articles from "../pages/admins/articles/Articles";
-import AddArticle from "../pages/admins/articles/AddArticle";
-import Purchase from "../pages/admins/purchase/Purchase";
-import AddPurchase from "../pages/admins/purchase/AddPurchase";
-import PurchaseInvoice from "../pages/admins/purchase/PurchaseInvoice";
-import Payments from "../pages/admins/payments/Payments";
-import AddPayment from "../pages/admins/payments/AddPayment";
-import PaymentReceipt from "../pages/admins/payments/PaymentReceipt";
-import Invoices from "../pages/admins/invoices/Invoices";
-import Reports from "../pages/admins/Reports";
-import Settings from "../pages/admins/Settings";
-import CompanyProfile from "../pages/admins/company/CompanyProfile";
-import LetterHeadSettings from "../pages/admins/company/LetterHeadSettings";
 
-// User (Operations)
-import UserDashboard from "../pages/users/UserDashboard";
-import ReceivedMaterial from "../pages/users/ReceivedMaterial";
-import AvailableStock from "../pages/users/AvailableStock";
-import UserPayments from "../pages/users/UserPayments";
-import UserInvoices from "../pages/users/UserInvoices";
 
-// Small helper to keep every guarded route on one line.
-const guard = (roles, Layout, Page) => (
-  <ProtectedRoute allowedRoles={roles}>
-    <Layout>
-      <Page />
-    </Layout>
-  </ProtectedRoute>
-);
+// Admin Dashboard
 
-export default function AppRoutes() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/unauthorized" element={<Unauthorized />} />
+import Dashboard 
+from "../pages/admins/Dashboard";
 
-        {/* ===== SUPER ADMIN ===== */}
-        <Route path="/super-admin/dashboard" element={guard(["SUPER_ADMIN"], SuperAdminLayout, SuperAdminDashboard)} />
-        <Route path="/super-admin/companies" element={guard(["SUPER_ADMIN"], SuperAdminLayout, Companies)} />
-        <Route path="/super-admin/admins" element={guard(["SUPER_ADMIN"], SuperAdminLayout, Admins)} />
-        <Route path="/super-admin/settings" element={guard(["SUPER_ADMIN"], SuperAdminLayout, PlatformSettings)} />
 
-        {/* ===== ADMIN ===== */}
-        <Route path="/admin/dashboard" element={guard(["ADMIN"], AdminLayout, Dashboard)} />
-        <Route path="/admin/users" element={guard(["ADMIN"], AdminLayout, Users)} />
-        <Route path="/admin/users/add" element={guard(["ADMIN"], AdminLayout, AddUser)} />
-        <Route path="/admin/vendors" element={guard(["ADMIN"], AdminLayout, Vendors)} />
-        <Route path="/admin/vendors/add" element={guard(["ADMIN"], AdminLayout, AddVendor)} />
-        <Route path="/admin/farmers" element={guard(["ADMIN"], AdminLayout, Farmers)} />
-        <Route path="/admin/farmers/add" element={guard(["ADMIN"], AdminLayout, AddFarmer)} />
-        <Route path="/admin/articles" element={guard(["ADMIN"], AdminLayout, Articles)} />
-        <Route path="/admin/articles/add" element={guard(["ADMIN"], AdminLayout, AddArticle)} />
-        <Route path="/admin/purchase" element={guard(["ADMIN"], AdminLayout, Purchase)} />
-        <Route path="/admin/purchase/add" element={guard(["ADMIN"], AdminLayout, AddPurchase)} />
-        <Route path="/admin/purchase/invoice" element={guard(["ADMIN"], AdminLayout, PurchaseInvoice)} />
-        <Route path="/admin/payments" element={guard(["ADMIN"], AdminLayout, Payments)} />
-        <Route path="/admin/payments/add" element={guard(["ADMIN"], AdminLayout, AddPayment)} />
-        <Route path="/admin/payments/receipt" element={guard(["ADMIN"], AdminLayout, PaymentReceipt)} />
-        <Route path="/admin/invoices" element={guard(["ADMIN"], AdminLayout, Invoices)} />
-        <Route path="/admin/reports" element={guard(["ADMIN"], AdminLayout, Reports)} />
-        <Route path="/admin/settings" element={guard(["ADMIN"], AdminLayout, Settings)} />
-        <Route path="/admin/company" element={guard(["ADMIN"], AdminLayout, CompanyProfile)} />
-        <Route path="/admin/company/letterhead" element={guard(["ADMIN"], AdminLayout, LetterHeadSettings)} />
 
-        {/* ===== USER (Operations) ===== */}
-        <Route path="/user/dashboard" element={guard(["USER"], UserLayout, UserDashboard)} />
-        <Route path="/user/material" element={guard(["USER"], UserLayout, ReceivedMaterial)} />
-        <Route path="/user/stock" element={guard(["USER"], UserLayout, AvailableStock)} />
-        <Route path="/user/payments" element={guard(["USER"], UserLayout, UserPayments)} />
-        <Route path="/user/invoices" element={guard(["USER"], UserLayout, UserInvoices)} />
+// Users
 
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="*" element={<Login />} />
-      </Routes>
-    </BrowserRouter>
-  );
+import Users 
+from "../pages/admins/users/Users";
+
+import AddUser
+from "../pages/admins/users/AddUser";
+
+
+
+// Vendors
+
+import Vendors
+from "../pages/admins/vendors/Vendors";
+
+import AddVendor
+from "../pages/admins/vendors/AddVendor";
+
+
+
+// Farmers
+
+import Farmers
+from "../pages/admins/farmers/Farmers";
+
+import AddFarmer
+from "../pages/admins/farmers/AddFarmer";
+
+
+
+// Articles
+
+import Articles
+from "../pages/admins/articles/Articles";
+
+
+import AddArticle
+from "../pages/admins/articles/AddArticle";
+
+
+
+// Purchase
+
+import Purchase
+from "../pages/admins/purchase/Purchase";
+
+
+import AddPurchase
+from "../pages/admins/purchase/AddPurchase";
+
+
+import PurchaseInvoice
+from "../pages/admins/purchase/PurchaseInvoice";
+
+
+
+// Payments
+
+import Payments
+from "../pages/admins/payments/Payments";
+
+
+import AddPayment
+from "../pages/admins/payments/AddPayment";
+
+
+import PaymentReceipt
+from "../pages/admins/payments/PaymentReceipt";
+
+
+
+// Invoices
+
+import Invoices
+from "../pages/admins/invoices/Invoices";
+import CreateInvoice from "../pages/admins/invoices/CreateInvoice";
+import InvoiceView from "../pages/admins/invoices/InvoiceView";
+
+
+
+// Reports
+
+import Reports
+from "../pages/admins/Reports";
+
+
+
+// Settings
+
+import Settings
+from "../pages/admins/Settings";
+
+
+
+// Company
+
+import CompanyProfile
+from "../pages/admins/company/CompanyProfile";
+
+
+import LetterHeadSettings
+from "../pages/admins/company/LetterHeadSettings";
+
+
+
+// User
+
+import UserDashboard
+from "../pages/users/UserDashboard";
+
+
+import ReceivedMaterial
+from "../pages/users/ReceivedMaterial";
+
+
+import UserPayments
+from "../pages/users/UserPayments";
+
+
+import UserInvoices
+from "../pages/users/UserInvoices";
+
+
+import Sales from "../pages/admins/sales/Sales";
+import CreateSale from "../pages/admins/sales/CreateSale";
+
+
+function AppRoutes(){
+
+
+return(
+
+
+<BrowserRouter>
+
+
+<Routes>
+
+
+
+{/* LOGIN */}
+
+<Route
+
+path="/login"
+
+element={<Login/>}
+
+/>
+
+
+
+<Route
+
+path="/unauthorized"
+
+element={<Unauthorized/>}
+
+/>
+
+
+
+
+
+{/* ================= SUPER ADMIN ================= */}
+
+
+
+<Route
+
+path="/super-admin/dashboard"
+
+element={
+
+
+<ProtectedRoute
+
+allowedRoles={["SUPER_ADMIN"]}
+
+>
+
+
+<SuperAdminLayout>
+
+
+<SuperAdminDashboard/>
+
+
+</SuperAdminLayout>
+
+
+</ProtectedRoute>
+
+
 }
+
+/>
+
+
+
+
+
+
+
+{/* ================= ADMIN ================= */}
+
+
+
+
+<Route
+
+path="/admin/dashboard"
+
+element={
+
+<ProtectedRoute allowedRoles={["ADMIN"]}>
+
+
+<AdminLayout>
+
+
+<Dashboard/>
+
+
+</AdminLayout>
+
+
+</ProtectedRoute>
+
+}
+
+/>
+
+
+
+
+
+<Route
+
+path="/admin/users"
+
+element={
+
+<ProtectedRoute allowedRoles={["ADMIN"]}>
+
+
+<AdminLayout>
+
+
+<Users/>
+
+
+</AdminLayout>
+
+
+</ProtectedRoute>
+
+}
+
+/>
+
+
+
+<Route
+
+path="/admin/users/add"
+
+element={
+
+<ProtectedRoute allowedRoles={["ADMIN"]}>
+
+
+<AdminLayout>
+
+
+<AddUser/>
+
+
+</AdminLayout>
+
+
+</ProtectedRoute>
+
+}
+
+/>
+
+<Route path="/admin/sales"     element={<ProtectedRoute allowedRoles={["ADMIN"]}><AdminLayout><Sales/></AdminLayout></ProtectedRoute>} />
+<Route path="/admin/sales/add" element={<ProtectedRoute allowedRoles={["ADMIN"]}><AdminLayout><CreateSale/></AdminLayout></ProtectedRoute>} />
+
+
+
+
+<Route
+
+path="/admin/vendors"
+
+element={
+
+<ProtectedRoute allowedRoles={["ADMIN"]}>
+
+
+<AdminLayout>
+
+
+<Vendors/>
+
+
+</AdminLayout>
+
+
+</ProtectedRoute>
+
+}
+
+/>
+
+
+
+<Route
+
+path="/admin/vendors/add"
+
+element={
+
+<ProtectedRoute allowedRoles={["ADMIN"]}>
+
+
+<AdminLayout>
+
+
+<AddVendor/>
+
+
+</AdminLayout>
+
+
+</ProtectedRoute>
+
+}
+
+/>
+
+
+
+
+
+
+<Route
+
+path="/admin/farmers"
+
+element={
+
+<ProtectedRoute allowedRoles={["ADMIN"]}>
+
+
+<AdminLayout>
+
+
+<Farmers/>
+
+
+</AdminLayout>
+
+
+</ProtectedRoute>
+
+}
+
+/>
+
+
+
+<Route
+
+path="/admin/farmers/add"
+
+element={
+
+<ProtectedRoute allowedRoles={["ADMIN"]}>
+
+
+<AdminLayout>
+
+
+<AddFarmer/>
+
+
+</AdminLayout>
+
+
+</ProtectedRoute>
+
+}
+
+/>
+
+
+
+
+
+
+
+<Route
+
+path="/admin/articles"
+
+element={
+
+<ProtectedRoute allowedRoles={["ADMIN"]}>
+
+
+<AdminLayout>
+
+
+<Articles/>
+
+
+</AdminLayout>
+
+
+</ProtectedRoute>
+
+}
+
+/>
+
+
+
+<Route
+
+path="/admin/articles/add"
+
+element={
+
+<ProtectedRoute allowedRoles={["ADMIN"]}>
+
+
+<AdminLayout>
+
+
+<AddArticle/>
+
+
+</AdminLayout>
+
+
+</ProtectedRoute>
+
+}
+
+/>
+
+
+
+
+
+
+
+
+<Route
+
+path="/admin/purchase"
+
+element={
+
+<ProtectedRoute allowedRoles={["ADMIN"]}>
+
+
+<AdminLayout>
+
+
+<Purchase/>
+
+
+</AdminLayout>
+
+
+</ProtectedRoute>
+
+}
+
+/>
+
+
+
+<Route
+
+path="/admin/purchase/add"
+
+element={
+
+<ProtectedRoute allowedRoles={["ADMIN"]}>
+
+
+<AdminLayout>
+
+
+<AddPurchase/>
+
+
+</AdminLayout>
+
+
+</ProtectedRoute>
+
+}
+
+/>
+
+
+
+
+<Route
+
+path="/admin/purchase/invoice"
+
+element={
+
+<ProtectedRoute allowedRoles={["ADMIN"]}>
+
+
+<AdminLayout>
+
+
+<PurchaseInvoice/>
+
+
+</AdminLayout>
+
+
+</ProtectedRoute>
+
+}
+
+/>
+
+
+
+
+
+
+
+<Route
+
+path="/admin/payments"
+
+element={
+
+<ProtectedRoute allowedRoles={["ADMIN"]}>
+
+
+<AdminLayout>
+
+
+<Payments/>
+
+
+</AdminLayout>
+
+
+</ProtectedRoute>
+
+}
+
+/>
+
+
+
+
+<Route
+
+path="/admin/payments/add"
+
+element={
+
+<ProtectedRoute allowedRoles={["ADMIN"]}>
+
+
+<AdminLayout>
+
+
+<AddPayment/>
+
+
+</AdminLayout>
+
+
+</ProtectedRoute>
+
+}
+
+/>
+
+
+
+<Route
+
+path="/admin/payments/receipt"
+
+element={
+
+<ProtectedRoute allowedRoles={["ADMIN"]}>
+
+
+<AdminLayout>
+
+
+<PaymentReceipt/>
+
+
+</AdminLayout>
+
+
+</ProtectedRoute>
+
+}
+
+/>
+
+
+
+
+
+<Route
+
+path="/admin/invoices"
+
+element={
+
+<ProtectedRoute allowedRoles={["ADMIN"]}>
+
+<AdminLayout>
+
+<Invoices />
+
+</AdminLayout>
+
+</ProtectedRoute>
+}
+/>
+
+<Route
+
+path="/admin/invoices/create"
+
+element={
+
+<ProtectedRoute allowedRoles={["ADMIN"]}>
+
+<AdminLayout>
+
+<CreateInvoice />
+
+</AdminLayout>
+
+</ProtectedRoute>
+}
+/>
+
+<Route
+
+path="/admin/invoices/view/:id"
+
+element={
+
+<ProtectedRoute allowedRoles={["ADMIN"]}>
+
+<AdminLayout>
+
+<InvoiceView />
+
+</AdminLayout>
+
+</ProtectedRoute>
+}
+/>
+
+
+
+
+
+
+<Route
+
+path="/admin/reports"
+
+element={
+
+<ProtectedRoute allowedRoles={["ADMIN"]}>
+
+
+<AdminLayout>
+
+
+<Reports/>
+
+
+</AdminLayout>
+
+
+</ProtectedRoute>
+
+}
+
+/>
+
+
+
+
+
+
+<Route
+
+path="/admin/settings"
+
+element={
+
+<ProtectedRoute allowedRoles={["ADMIN"]}>
+
+
+<AdminLayout>
+
+
+<Settings/>
+
+
+</AdminLayout>
+
+
+</ProtectedRoute>
+
+}
+
+/>
+
+
+
+
+
+
+<Route
+
+path="/admin/company"
+
+element={
+
+<ProtectedRoute allowedRoles={["ADMIN"]}>
+
+
+<AdminLayout>
+
+
+<CompanyProfile/>
+
+
+</AdminLayout>
+
+
+</ProtectedRoute>
+
+}
+
+/>
+
+
+
+
+<Route
+
+path="/admin/company/letterhead"
+
+element={
+
+<ProtectedRoute allowedRoles={["ADMIN"]}>
+
+
+<AdminLayout>
+
+
+<LetterHeadSettings/>
+
+
+</AdminLayout>
+
+
+</ProtectedRoute>
+
+}
+
+/>
+
+
+
+
+
+
+
+
+{/* ================= USER ================= */}
+
+
+
+<Route
+
+path="/user/dashboard"
+
+element={
+
+<ProtectedRoute allowedRoles={["USER"]}>
+
+
+<UserLayout>
+
+
+<UserDashboard/>
+
+
+</UserLayout>
+
+
+</ProtectedRoute>
+
+}
+
+/>
+
+
+
+
+
+<Route
+
+path="/user/material"
+
+element={
+
+<ProtectedRoute allowedRoles={["USER"]}>
+
+
+<UserLayout>
+
+
+<ReceivedMaterial/>
+
+
+</UserLayout>
+
+
+</ProtectedRoute>
+
+}
+
+/>
+
+
+
+
+
+<Route
+
+path="/user/payments"
+
+element={
+
+<ProtectedRoute allowedRoles={["USER"]}>
+
+
+<UserLayout>
+
+
+<UserPayments/>
+
+
+</UserLayout>
+
+
+</ProtectedRoute>
+
+}
+
+/>
+
+
+
+
+
+<Route
+
+path="/user/invoices"
+
+element={
+
+<ProtectedRoute allowedRoles={["USER"]}>
+
+
+<UserLayout>
+
+
+<UserInvoices/>
+
+
+</UserLayout>
+
+
+</ProtectedRoute>
+
+}
+
+/>
+
+
+
+
+
+{/* FALLBACK */}
+
+
+<Route
+
+path="*"
+
+element={<Login/>}
+
+/>
+
+
+
+</Routes>
+
+
+</BrowserRouter>
+
+
+)
+
+}
+
+
+
+export default AppRoutes;
