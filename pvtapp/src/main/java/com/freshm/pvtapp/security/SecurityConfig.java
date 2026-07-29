@@ -140,6 +140,8 @@ configuration.setAllowedOrigins(List.of(
     "http://localhost:5175",
     "http://localhost:5176",
     "http://localhost:5178",
+    "https://freshm.online",
+    "https://www.freshm.online",
     "http://localhost:3000"
 ));
         configuration.setAllowedMethods(
