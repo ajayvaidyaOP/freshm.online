@@ -3,7 +3,7 @@ import axios from "axios";
 // Point directly at the backend so requests always hit :8080 — no proxy needed.
 // For production, set VITE_API_URL in a .env file (e.g. https://api.yourdomain.com/api).
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:8080/api",
+  baseURL:"/api",
   headers: {
     "Content-Type": "application/json",
   },
