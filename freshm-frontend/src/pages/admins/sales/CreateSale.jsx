@@ -24,6 +24,7 @@ const lineAmount = (it) => (num(it.weightKg) > 0 ? num(it.weightKg) * num(it.pri
 export default function CreateSale() {
   const [buyers, setBuyers] = useState([]);
   const [products, setProducts] = useState([]);
+  const [stock, setStock] = useState({});   // productId -> onHand
   const [company, setCompany] = useState(null);
 
   const [buyerId, setBuyerId] = useState("");
@@ -42,6 +43,10 @@ export default function CreateSale() {
     (async () => {
       setBuyers(await safeGet("/buyers"));
       setProducts(await safeGet("/products"));
+      const st = await safeGet("/stock");
+      const map = {};
+      (Array.isArray(st) ? st : []).forEach((r) => { map[r.productId] = r.onHand; });
+      setStock(map);
       const me = JSON.parse(localStorage.getItem("user") || "{}");
       setCompany(me);
       setLetterHeadName(me.companyName || "");
@@ -49,6 +54,11 @@ export default function CreateSale() {
   }, []);
 
   const setItem = (i, k, v) => setItems((ls) => ls.map((it, idx) => (idx === i ? { ...it, [k]: v } : it)));
+  const setArticle = (i, pid) => setItems((ls) => ls.map((it, idx) => {
+    if (idx !== i) return it;
+    const p = products.find((x) => String(x.id) === String(pid));
+    return { ...it, productId: pid, description: p ? p.productName : it.description };
+  }));
   const addItem = () => setItems((ls) => [...ls, emptyItem()]);
   const addEmptyBox = () => setItems((ls) => [...ls, { ...emptyItem(), description: "Empty box" }]);
   const removeItem = (i) => setItems((ls) => (ls.length === 1 ? ls : ls.filter((_, idx) => idx !== i)));
@@ -161,6 +171,7 @@ export default function CreateSale() {
             <Table size="small">
               <TableHead>
                 <TableRow>
+                  <TableCell width={150}>Article</TableCell>
                   <TableCell>Material Desc.</TableCell>
                   <TableCell width={80}>Item</TableCell>
                   <TableCell width={90}>Weight kg</TableCell>
@@ -172,6 +183,15 @@ export default function CreateSale() {
               <TableBody>
                 {items.map((it, i) => (
                   <TableRow key={i}>
+                    <TableCell>
+                      <TextField select variant="standard" fullWidth value={it.productId || ""}
+                        onChange={(e) => setArticle(i, e.target.value)}
+                        helperText={it.productId && stock[it.productId] != null ? `avail ${stock[it.productId]} kg` : ""}
+                        FormHelperTextProps={{ sx: { color: it.productId && stock[it.productId] != null && Number(it.weightKg) > stock[it.productId] ? "#B5533C" : "#5b6b60", m: 0 } }}>
+                        <MenuItem value="">— custom —</MenuItem>
+                        {products.map((p) => <MenuItem key={p.id} value={p.id}>{p.productName}</MenuItem>)}
+                      </TextField>
+                    </TableCell>
                     <TableCell>
                       <TextField variant="standard" fullWidth placeholder="Fresh Capsicum" value={it.description}
                         onChange={(e) => setItem(i, "description", e.target.value)} />

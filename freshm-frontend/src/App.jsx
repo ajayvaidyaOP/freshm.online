@@ -1,17 +1,15 @@
 import React from "react";
 
 import AppRoutes from "./routes/AppRoutes";
+import InstallPrompt from "./components/InstallPrompt";
 
-
-function App(){
-
+function App() {
   return (
-
-    <AppRoutes />
-
+    <>
+      <AppRoutes />
+      <InstallPrompt />
+    </>
   );
-
 }
-
 
 export default App;

@@ -68,18 +68,23 @@ public class FarmerServiceImpl implements FarmerService {
 
 
 
-        Vendor vendor =
-                vendorRepository
-                        .findByIdAndCompanyId(
-                                request.getVendorId(),
-                                company.getId()
-                        )
-                        .orElseThrow(
-                                () ->
-                                new ResourceNotFoundException(
-                                        "Vendor not found"
-                                )
-                        );
+        // Vendor is OPTIONAL — a farmer is an independent supplier.
+        // Only resolve a vendor when one was actually chosen.
+        Vendor vendor = null;
+        if (request.getVendorId() != null) {
+            vendor =
+                    vendorRepository
+                            .findByIdAndCompanyId(
+                                    request.getVendorId(),
+                                    company.getId()
+                            )
+                            .orElseThrow(
+                                    () ->
+                                    new ResourceNotFoundException(
+                                            "Vendor not found"
+                                    )
+                            );
+        }
 
 
 

@@ -3,7 +3,6 @@ import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 
 // FreshM ERP — Vite + React + PWA
-// Run: npm i -D vite-plugin-pwa   (see FRONTEND_README.md)
 export default defineConfig({
   plugins: [
     react(),
@@ -26,19 +25,24 @@ export default defineConfig({
           { src: "icons/maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
         ],
       },
+      // IMPORTANT: do NOT cache /api — the service worker must never sit in front
+      // of backend calls, or you get stale/404 responses on the wrong origin.
       workbox: {
-        navigateFallback: "/index.html",
-        runtimeCaching: [
-          {
-            // cache API GETs so lists still render briefly offline
-            urlPattern: ({ url }) => url.pathname.startsWith("/api/"),
-            handler: "NetworkFirst",
-            options: { cacheName: "freshm-api", expiration: { maxEntries: 120, maxAgeSeconds: 86400 } },
-          },
-        ],
+        navigateFallback: null,
+        navigateFallbackDenylist: [/^\/api/],
       },
       devOptions: { enabled: false },
     }),
   ],
-  server: { port: 5173 },
+  // Proxy kept as a harmless backup; with the absolute API baseURL it isn't used.
+  server: {
+    port: 5173,
+    proxy: {
+      "/api": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 });
