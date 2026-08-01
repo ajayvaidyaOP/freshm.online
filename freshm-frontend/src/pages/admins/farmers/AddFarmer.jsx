@@ -135,9 +135,7 @@ if (!formData.farmerName.trim()) {
   newErrors.farmerName = "Farmer Name is required";
 }
 
-if (!formData.vendorId) {
-  newErrors.vendorId = "Vendor is required";
-}
+// Vendor is OPTIONAL — a farmer is an independent supplier.
 
 if (!formData.mobile.trim()) {
   newErrors.mobile = "Mobile Number is required";
@@ -145,22 +143,17 @@ if (!formData.mobile.trim()) {
   newErrors.mobile = "Mobile Number must be 10 digits";
 }
 
-if (!formData.aadharNumber.trim()) {
-  newErrors.aadharNumber = "Aadhar Number is required";
-} else if (!/^\d{12}$/.test(formData.aadharNumber)) {
+// Aadhaar optional — validate format only if something was entered.
+if (formData.aadharNumber.trim() && !/^\d{12}$/.test(formData.aadharNumber.trim())) {
   newErrors.aadharNumber = "Aadhar Number must be 12 digits";
 }
 
-if (!formData.panNumber.trim()) {
-  newErrors.panNumber = "PAN Number is required";
-} else if (
-  !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(formData.panNumber.toUpperCase())
+// PAN optional — validate format only if something was entered (case-insensitive).
+if (
+  formData.panNumber.trim() &&
+  !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(formData.panNumber.trim().toUpperCase())
 ) {
-  newErrors.panNumber = "Invalid PAN Number";
-}
-
-if (!formData.address.trim()) {
-  newErrors.address = "Address is required";
+  newErrors.panNumber = "PAN must look like ABCDE1234F";
 }
 
 setErrors(newErrors);
@@ -171,9 +164,16 @@ if (Object.keys(newErrors).length > 0) {
         try {
             const data = new FormData();
 
+            // Normalise before sending: PAN uppercased, empty vendor -> null.
+            const payload = {
+                ...formData,
+                panNumber: formData.panNumber ? formData.panNumber.trim().toUpperCase() : "",
+                vendorId: formData.vendorId ? formData.vendorId : null,
+            };
+
             data.append(
                 "farmer",
-                new Blob([JSON.stringify(formData)], {
+                new Blob([JSON.stringify(payload)], {
                     type: "application/json",
                 })
             );
@@ -326,7 +326,7 @@ setBankPassbookFile(null);
                         </Grid>
                       <Grid item xs={12} md={6}>
    <FormControl fullWidth error={!!errors.vendorId}>
-  <InputLabel>Vendor</InputLabel>
+  <InputLabel>Vendor (optional)</InputLabel>
 
   <Select
     name="vendorId"
@@ -526,7 +526,7 @@ setBankPassbookFile(null);
                                     },
                                 }}
                             >
-                                Upload Aadhaar
+                                {aadharFile ? `✓ ${aadharFile.name}` : "Upload Aadhaar"}
                                 <input
     hidden
     type="file"
@@ -550,7 +550,7 @@ setBankPassbookFile(null);
                                     fontWeight: 700,
                                 }}
                             >
-                                Upload PAN
+                                {panFile ? `✓ ${panFile.name}` : "Upload PAN"}
                                 <input
     hidden
     type="file"
@@ -574,7 +574,7 @@ setBankPassbookFile(null);
                                     fontWeight: 700,
                                 }}
                             >
-                                Upload Bank Statement
+                                {bankPassbookFile ? `✓ ${bankPassbookFile.name}` : "Upload Bank Statement"}
                                <input
     hidden
     type="file"

@@ -8,15 +8,10 @@ import theme from "./theme/theme";
 import { AuthProvider } from "./context/AuthContext";
 import { BrandFonts } from "./brand/Brand";
 
-// PWA service worker (from vite-plugin-pwa). The virtual module
-// only exists after the plugin is installed — guarded so the app
-// still runs in dev before you add it.
-try {
-  // eslint-disable-next-line import/no-unresolved
-  import("virtual:pwa-register").then(({ registerSW }) => {
-    registerSW({ immediate: true });
-  });
-} catch (_) { /* plugin not installed yet */ }
+// Register the service worker so the app is installable (production build).
+// In dev (devOptions.enabled:false) this is a no-op, which is expected.
+import { registerSW } from "virtual:pwa-register";
+registerSW({ immediate: true });
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

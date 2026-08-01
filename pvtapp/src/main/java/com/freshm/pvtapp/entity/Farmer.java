@@ -61,7 +61,7 @@ public class Farmer extends BaseEntity {
     private Boolean active = true;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "vendor_id", nullable = false)
+    @JoinColumn(name = "vendor_id", nullable = true)
     private Vendor vendor;
 
     @ManyToOne(fetch = FetchType.LAZY)

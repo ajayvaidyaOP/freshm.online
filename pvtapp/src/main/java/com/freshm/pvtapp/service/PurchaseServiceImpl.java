@@ -69,14 +69,9 @@ public class PurchaseServiceImpl implements PurchaseService {
                 securityUtil.getCurrentCompany();
 
 
-        if (request.getVendorId() == null
-                && request.getFarmerId() == null) {
-
-            throw new BadRequestException(
-                    "Either a vendor or a farmer must be selected."
-            );
+        if (request.getVendorId() == null && request.getFarmerId() == null) {
+            throw new IllegalArgumentException("Select a vendor or a farmer for the purchase.");
         }
-
 
         if (request.getItems() == null
                 || request.getItems().isEmpty()) {
