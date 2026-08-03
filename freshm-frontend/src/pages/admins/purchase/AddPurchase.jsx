@@ -184,7 +184,7 @@ if (Object.keys(newErrors).length > 0) {
       const response = await createPurchase(payload);
 
       alert("Purchase Saved Successfully");
-      alert("Purchase ID : " + response.id);
+      //alert("Purchase ID : " + response.id);
       console.log(response);
 
       setPurchase({
