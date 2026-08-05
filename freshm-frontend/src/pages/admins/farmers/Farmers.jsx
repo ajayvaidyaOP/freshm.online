@@ -133,7 +133,7 @@ export default function Farmers() {
                 display="flex"
                 justifyContent="space-between"
                 alignItems="center"
-                mb={4}
+                mb={2}
             >
                 <Box>
                     <Typography
@@ -185,6 +185,7 @@ export default function Farmers() {
             <Card
                 elevation={0}
                 sx={{
+                     mt: 2,
                     borderRadius: 4,
                     background: palette.paper,
                     border: `1px solid ${palette.line}`,

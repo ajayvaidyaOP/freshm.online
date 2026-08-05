@@ -1,19 +1,25 @@
 
 
 
-// import React from "react";
 
+// import React, { useEffect, useState } from "react";
 
 // import {
-
 //   Box,
 //   Card,
 //   CardContent,
 //   Typography,
 //   TextField,
-//   Button
-
+//   Button,
+//   Snackbar,
+//   Alert,
 // } from "@mui/material";
+
+// import {
+//   getLetterHeads,
+//   createLetterHead,
+//   updateLetterHead,
+// } from "../../../services/letterHeadService";
 
 // const palette = {
 //   forest: "#0F2E20",
@@ -23,6 +29,382 @@
 //   inkSoft: "#4B5A50",
 //   line: "rgba(201,162,75,0.35)",
 // };
+
+// export default function LetterHeadSettings() {
+
+//   const [letterHeadId, setLetterHeadId] = useState(null);
+
+//   const [formData, setFormData] = useState({
+//     companyLogoUrl: "",
+//     headerTitle: "",
+//     footerText: "",
+//   });
+
+//   const [loading, setLoading] = useState(false);
+
+//   const [snackbar, setSnackbar] = useState({
+//     open: false,
+//     severity: "success",
+//     message: "",
+//   });
+
+//   const handleChange = (e) => {
+//     setFormData({
+      
+//       ...formData,
+//       [e.target.name]: e.target.value,
+//     });
+//   };
+// const [errors, setErrors] = useState({
+//   companyLogoUrl: "",
+//   headerTitle: "",
+//   footerText: "",
+// });
+//   const loadLetterHead = async () => {
+
+    
+//     try {
+//       setLoading(true);
+
+//       const response = await getLetterHeads();
+
+//       if (response.data) {
+//         const data = Array.isArray(response.data)
+//           ? response.data[0]
+//           : response.data;
+
+//         if (data) {
+//           setLetterHeadId(data.id);
+
+//           setFormData({
+//             companyLogoUrl: data.companyLogoUrl || "",
+//             headerTitle: data.headerTitle || "",
+//             footerText: data.footerText || "",
+//           });
+//         }
+//       }
+//     } catch (error) {
+//       console.error(error);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+ 
+
+
+// const handleSave = async () => {
+//   const newErrors = {};
+
+// if (!formData.companyLogoUrl.trim()) {
+//   newErrors.companyLogoUrl = "Company Logo URL is required";
+// }
+
+// if (!formData.headerTitle.trim()) {
+//   newErrors.headerTitle = "Header Title is required";
+// }
+
+// if (!formData.footerText.trim()) {
+//   newErrors.footerText = "Footer Text is required";
+// }
+
+// setErrors(newErrors);
+
+// if (Object.keys(newErrors).length > 0) {
+//   return;
+// }
+//   try {
+//     setLoading(true);
+
+//     if (letterHeadId) {
+//       await updateLetterHead(letterHeadId, formData);
+
+//       setSnackbar({
+//         open: true,
+//         severity: "success",
+//         message: "Letter Head updated successfully",
+//       });
+//     } else {
+//       const response = await createLetterHead(formData);
+
+//       if (response.data?.id) {
+//         setLetterHeadId(response.data.id);
+//       }
+
+//       setSnackbar({
+//         open: true,
+//         severity: "success",
+//         message: "Letter Head saved successfully",
+//       });
+//     }
+//     setErrors({
+
+//   companyLogoUrl: "",
+
+//   headerTitle: "",
+
+//   footerText: "",
+
+// });
+
+//   } catch (error) {
+//     console.error(error);
+
+//     setSnackbar({
+//       open: true,
+//       severity: "error",
+//       message: "Failed to save Letter Head",
+//     });
+    
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+
+// useEffect(() => {
+//   loadLetterHead();
+// }, []);
+
+  
+
+//   return (
+//     <Box
+//       sx={{
+//         p: 4,
+//         background: palette.paperDim,
+//         minHeight: "100vh",
+//       }}
+//     >
+
+//       <Typography
+//         sx={{
+//           fontFamily: "'Fraunces', serif",
+//           fontSize: 34,
+//           fontWeight: 600,
+//           color: palette.ink,
+//         }}
+//       >
+//         Letter Head Settings
+//       </Typography>
+
+
+
+
+//       <Card
+//         elevation={0}
+//         sx={{
+//           borderRadius: 4,
+//           background: palette.paper,
+//           border: `1px solid ${palette.line}`,
+//           boxShadow: "0 25px 50px rgba(0,0,0,.08)",
+//         }}
+//       >
+
+//         <CardContent sx={{ p: 4 }}>
+
+
+//           <Typography
+//             sx={{
+//               fontFamily: "'Fraunces', serif",
+//               fontSize: 24,
+//               mb: 3,
+//             }}
+//           >
+//             Company Header
+//           </Typography>
+
+
+
+//           <TextField
+//   fullWidth
+//   required
+//   label="Company Logo URL"
+//   name="companyLogoUrl"
+//   value={formData.companyLogoUrl}
+//   error={!!errors.companyLogoUrl}
+//   helperText={errors.companyLogoUrl}
+//   onChange={(e) => {
+//     handleChange(e);
+//     setErrors({
+//       ...errors,
+//       companyLogoUrl: "",
+//     });
+//   }}
+//   margin="normal"
+// />
+
+
+
+//           <TextField
+//   fullWidth
+//   label="Header Title"
+//   name="headerTitle"
+//   value={formData.headerTitle}
+//   required
+// error={!!errors.headerTitle}
+// helperText={errors.headerTitle}
+// onChange={(e) => {
+//   handleChange(e);
+//   setErrors({
+//     ...errors,
+//     headerTitle: "",
+//   });
+// }}
+//   margin="normal"
+// />
+
+
+//           <TextField
+//   fullWidth
+//   label="Footer Text"
+//   name="footerText"
+//   value={formData.footerText}
+//   required
+// error={!!errors.footerText}
+// helperText={errors.footerText}
+// onChange={(e) => {
+//   handleChange(e);
+//   setErrors({
+//     ...errors,
+//     footerText: "",
+//   });
+// }}
+//   margin="normal"
+// />
+
+
+
+
+//          <Button
+//   variant="contained"
+//   onClick={handleSave}
+//   disabled={loading}
+
+//             sx={{
+//               mt: 2,
+//               px: 3,
+//               height: 50,
+//               borderRadius: 3,
+//               textTransform: "none",
+//               fontWeight: 700,
+//               background: "linear-gradient(135deg,#0F2E20,#0B2F22)",
+
+//               "&:hover": {
+//                 background: "linear-gradient(135deg,#081F16,#0B2F22)",
+//               },
+//             }}
+//           >
+
+//             Save Letter Head
+
+//           </Button>
+
+
+
+//         </CardContent>
+
+
+//       </Card>
+
+
+
+
+//       <Box mt={4}>
+
+
+//         <Card
+//           elevation={0}
+//           sx={{
+//             borderRadius: 4,
+//             background: palette.paper,
+//             border: `1px solid ${palette.line}`,
+//             boxShadow: "0 25px 50px rgba(0,0,0,.08)",
+//           }}
+//         >
+
+//           <CardContent sx={{ p: 4 }}>
+
+//             <Typography
+//               sx={{
+//                 fontFamily: "'Fraunces', serif",
+//                 fontSize: 24,
+//                 mb: 2,
+//               }}
+//             >
+//               Preview
+//             </Typography>
+
+//             <hr />
+
+
+//             <Typography
+
+//               variant="h5"
+
+//               fontWeight={700}
+
+//             >
+
+//               GREEN AGRO PVT LTD
+
+//             </Typography>
+
+
+//             <Typography>
+
+//               GST: XXXXXXXX
+
+//             </Typography>
+
+
+//             <Typography>
+
+//               Nagpur Maharashtra
+
+//             </Typography>
+
+
+
+//           </CardContent>
+
+
+//         </Card>
+
+
+//       </Box>
+
+// <Snackbar
+//   open={snackbar.open}
+//   autoHideDuration={3000}
+//   onClose={() =>
+//     setSnackbar({
+//       ...snackbar,
+//       open: false,
+//     })
+//   }
+// >
+//   <Alert
+//     severity={snackbar.severity}
+//     onClose={() =>
+//       setSnackbar({
+//         ...snackbar,
+//         open: false,
+//       })
+//     }
+//   >
+//     {snackbar.message}
+//   </Alert>
+// </Snackbar>
+
+//     </Box>
+
+
+//   )
+
+// }
+
+
+
 import React, { useEffect, useState } from "react";
 
 import {
@@ -34,8 +416,14 @@ import {
   Button,
   Snackbar,
   Alert,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
 } from "@mui/material";
-
 import {
   getLetterHeads,
   createLetterHead,
@@ -81,37 +469,39 @@ const [errors, setErrors] = useState({
   headerTitle: "",
   footerText: "",
 });
+const [letterHeads, setLetterHeads] = useState([]);
   const loadLetterHead = async () => {
-
     
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      const response = await getLetterHeads();
+    const response = await getLetterHeads();
 
-      if (response.data) {
-        const data = Array.isArray(response.data)
-          ? response.data[0]
-          : response.data;
+    const list = Array.isArray(response.data)
+      ? response.data
+      : response.data
+      ? [response.data]
+      : [];
 
-        if (data) {
-          setLetterHeadId(data.id);
+    setLetterHeads(list);
 
-          setFormData({
-            companyLogoUrl: data.companyLogoUrl || "",
-            headerTitle: data.headerTitle || "",
-            footerText: data.footerText || "",
-          });
-        }
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
+    if (list.length > 0) {
+      const data = list[0];
+
+      setLetterHeadId(data.id);
+
+      setFormData({
+        companyLogoUrl: data.companyLogoUrl || "",
+        headerTitle: data.headerTitle || "",
+        footerText: data.footerText || "",
+      });
     }
-  };
-
- 
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setLoading(false);
+  }
+};
 
 
 const handleSave = async () => {
@@ -139,7 +529,7 @@ if (Object.keys(newErrors).length > 0) {
 
     if (letterHeadId) {
       await updateLetterHead(letterHeadId, formData);
-
+      await loadLetterHead();
       setSnackbar({
         open: true,
         severity: "success",
@@ -148,15 +538,17 @@ if (Object.keys(newErrors).length > 0) {
     } else {
       const response = await createLetterHead(formData);
 
-      if (response.data?.id) {
-        setLetterHeadId(response.data.id);
-      }
+if (response.data?.id) {
+  setLetterHeadId(response.data.id);
+}
 
-      setSnackbar({
-        open: true,
-        severity: "success",
-        message: "Letter Head saved successfully",
-      });
+await loadLetterHead();
+
+setSnackbar({
+  open: true,
+  severity: "success",
+  message: "Letter Head saved successfully",
+});
     }
     setErrors({
 
@@ -168,25 +560,22 @@ if (Object.keys(newErrors).length > 0) {
 
 });
 
-  } catch (error) {
-    console.error(error);
+  }  catch (error) {
+  console.error(error);
+  console.log("Status:", error.response?.status);
+  console.log("Data:", error.response?.data);
 
-    setSnackbar({
-      open: true,
-      severity: "error",
-      message: "Failed to save Letter Head",
-    });
-    
-  } finally {
-    setLoading(false);
-  }
+  setSnackbar({
+    open: true,
+    severity: "error",
+    message: "Failed to save Letter Head",
+  });
+} finally {
+  setLoading(false);
+}
 };
 
-useEffect(() => {
-  loadLetterHead();
-}, []);
 
-  
 
   return (
     <Box
@@ -393,7 +782,58 @@ onChange={(e) => {
 
 
       </Box>
+ <Card
+  elevation={0}
+  sx={{
+    mt: 4,
+    borderRadius: 4,
+    background: palette.paper,
+    border: `1px solid ${palette.line}`,
+    boxShadow: "0 25px 50px rgba(0,0,0,.08)",
+  }}
+>
+  <CardContent>
+    <Typography
+      sx={{
+        fontSize: 24,
+        fontWeight: 600,
+        mb: 3,
+      }}
+    >
+      Letter Head List
+    </Typography>
 
+    <TableContainer component={Paper}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell><b>Logo URL</b></TableCell>
+            <TableCell><b>Header Title</b></TableCell>
+            <TableCell><b>Footer Text</b></TableCell>
+          </TableRow>
+        </TableHead>
+
+        <TableBody>
+          {letterHeads.length > 0 ? (
+            letterHeads.map((item) => (
+              <TableRow key={item.id}>
+                <TableCell>{item.companyLogoUrl}</TableCell>
+                <TableCell>{item.headerTitle}</TableCell>
+                <TableCell>{item.footerText}</TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={3} align="center">
+                No Letter Head Found
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  </CardContent>
+</Card>
 <Snackbar
   open={snackbar.open}
   autoHideDuration={3000}

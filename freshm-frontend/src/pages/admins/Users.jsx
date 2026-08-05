@@ -27,25 +27,18 @@ Users
 
 
 <Button
-variant="contained"
-sx={{mt:3}}
+  variant="contained"
+  sx={{ mt: 3 }}
 >
-
-+ Add User
-
+  + Add User
 </Button>
 
+<Box sx={{ height: 24 }} />
 
-
-<Card sx={{mt:3}}>
-
-<CardContent>
-
-User Management Table
-
-</CardContent>
-
-
+<Card>
+  <CardContent>
+    User Management Table
+  </CardContent>
 </Card>
 
 

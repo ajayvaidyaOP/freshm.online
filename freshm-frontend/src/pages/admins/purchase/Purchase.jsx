@@ -101,7 +101,7 @@ export default function Purchase() {
         display="flex"
         justifyContent="space-between"
         alignItems="center"
-        mb={4}
+        mb={2}
       >
         <Box>
           <Typography
@@ -151,6 +151,7 @@ export default function Purchase() {
       <Card
         elevation={0}
         sx={{
+           mt: 2,
           borderRadius: 4,
           background: palette.paper,
           border: `1px solid ${palette.line}`,
@@ -160,6 +161,7 @@ export default function Purchase() {
         <CardContent sx={{ p: 4 }}>
           <Typography
             sx={{
+               
               fontFamily: "'Fraunces', serif",
               fontSize: 24,
               mb: 3,

@@ -77,7 +77,15 @@ export default function PurchaseInvoice() {
 
       <Grid container spacing={2.5}>
         <Grid item xs={12} md={5}>
-          <Card sx={{ p: 3, borderRadius: 4 }}>
+          <Card
+  sx={{
+    p: 3,
+    borderRadius: 4,
+    background: "#FAF6EC",
+    border: "1px solid rgba(201,162,75,.35)",
+    boxShadow: "0 25px 50px rgba(0,0,0,.08)",
+  }}
+>
             <TextField select fullWidth size="small" label="Select purchase" value={purchaseId}
               onChange={(e) => setPurchaseId(e.target.value)} sx={{ ...fieldSx, mb: 2 }}>
               {purchases.length === 0 && <MenuItem disabled value="">No purchases found</MenuItem>}

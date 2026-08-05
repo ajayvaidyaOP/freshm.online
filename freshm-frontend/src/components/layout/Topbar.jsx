@@ -61,11 +61,11 @@ export default function Topbar() {
         background: "#FFFFFF",
         color: palette.ink,
         borderBottom: `1px solid ${palette.line}`,
-        boxShadow: "0 4px 16px rgba(15,46,32,0.05)",
+        boxShadow: "0 8px 24px rgba(15,46,32,0.08)",
         zIndex: (t) => t.zIndex.drawer - 1, // stays under the sidebar/hamburger
       }}
     >
-      <Toolbar
+      {/* <Toolbar
         sx={{
           // extra left padding on mobile so the title never sits
           // under the sidebar's floating hamburger button
@@ -73,7 +73,15 @@ export default function Topbar() {
           pr: { xs: 2, sm: 3 },
           gap: 1,
         }}
-      >
+      > */}
+      <Toolbar
+  sx={{
+    minHeight: "72px !important",
+    pl: isMobile ? "68px" : 3,
+    pr: { xs: 3, sm: 4 },
+    gap: 2,
+  }}
+>
         <Typography
           sx={{
             flexGrow: 1,

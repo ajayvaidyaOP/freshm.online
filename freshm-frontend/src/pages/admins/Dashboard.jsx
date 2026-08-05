@@ -13,7 +13,7 @@ const gold = "#C9A24B";
 const ink = "#17231C";
 const slate = "#5b6b60";
 const rust = "#B5533C";
-
+const paperDim = "#F3EDDF";
 async function safeGet(url) {
   try { const r = await api.get(url); return r.data?.data ?? r.data ?? []; } catch { return []; }
 }
@@ -65,18 +65,89 @@ export default function Dashboard() {
   }
 
   return (
-    <Box>
-      <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "flex-end" }} spacing={2} sx={{ mb: 3 }}>
-        <Box>
-          <Typography variant="overline" sx={{ color: gold }}>Company workspace</Typography>
-          <Typography variant="h4" sx={{ fontWeight: 700, color: forest }}>Dashboard</Typography>
-          <Typography variant="body2" sx={{ color: slate }}>Live figures for your company only.</Typography>
-        </Box>
-        <Stack direction="row" spacing={1}>
-          <Button variant="outlined" onClick={() => navigate("/admin/purchase/add")}>New purchase</Button>
-          <Button variant="contained" onClick={() => navigate("/admin/sales/add")} sx={{ background: forest, "&:hover": { background: forestDeep } }}>New sale</Button>
-        </Stack>
-      </Stack>
+    
+  
+  <Box
+    sx={{
+      p: 4,
+      background: paperDim,
+      minHeight: "100vh",
+    }}
+  >
+      <Box
+  sx={{
+    position: "relative",
+    mb: 4,
+    minHeight: 120,
+  }}
+>
+  {/* Center Title */}
+  <Box
+    sx={{
+      textAlign: "center",
+    }}
+  >
+    <Typography
+      variant="overline"
+      sx={{
+        color: gold,
+        letterSpacing: 2,
+      }}
+    >
+      COMPANY WORKSPACE
+    </Typography>
+
+    <Typography
+      variant="h3"
+      sx={{
+        fontWeight: 700,
+        color: forest,
+      }}
+    >
+      Dashboard
+    </Typography>
+
+    <Typography
+      variant="body2"
+      sx={{
+        color: slate,
+      }}
+    >
+      Live figures for your company only.
+    </Typography>
+  </Box>
+
+  {/* Right Side Buttons */}
+  <Stack
+    direction="row"
+    spacing={2}
+    sx={{
+      position: "absolute",
+      top: 15,
+      right: -10,
+    }}
+  >
+    <Button
+      variant="outlined"
+      onClick={() => navigate("/admin/purchase/add")}
+    >
+      New purchase
+    </Button>
+
+    <Button
+      variant="contained"
+      onClick={() => navigate("/admin/sales/add")}
+      sx={{
+        background: forest,
+        "&:hover": {
+          background: forestDeep,
+        },
+      }}
+    >
+      New sale
+    </Button>
+  </Stack>
+</Box>
 
       <Grid container spacing={2.5} sx={{ mb: 3 }}>
         <Grid item xs={6} md={3}><Stat label="Total vendors" value={vendors.length} unit="active" icon={<PeopleRoundedIcon />} /></Grid>
@@ -85,7 +156,14 @@ export default function Dashboard() {
         <Grid item xs={6} md={3}><Stat label="Pending payment" value={`₹${pending.toLocaleString("en-IN")}`} warn icon={<PendingActionsRoundedIcon />} /></Grid>
       </Grid>
 
-      <Card sx={{ p: { xs: 2, md: 2.5 }, borderRadius: 3, border: "1px solid rgba(201,162,75,.3)" }}>
+      <Card
+  sx={{
+    p: { xs: 2, md: 2.5 },
+    borderRadius: 3,
+    backgroundColor: "#F6F4EC",
+    border: "1px solid rgba(201,162,75,.3)",
+  }}
+>
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
           <Typography variant="h6" sx={{ color: ink }}>Recent purchases</Typography>
           <Button size="small" onClick={() => navigate("/admin/purchase")}>View all</Button>

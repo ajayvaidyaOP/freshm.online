@@ -74,13 +74,19 @@ export default function AddPurchase() {
   const [products, setProducts] = useState([]);
 
   const [purchase, setPurchase] = useState({
-    vendorId: "",
-    farmerId: "",
-    productId: "",
-    quantity: "",
-    rate: "",
-    remarks: "",
-  });
+  vendorId: "",
+  farmerId: "",
+  productId: "",
+  unit: "",
+  quantity: "",
+  kg: "",
+  rate: "",
+  remarks: "",
+
+  hamali: "",
+  commission: "",
+  transportAdvance: "",
+});
   const [errors, setErrors] = useState({
   vendorId: "",
   farmerId: "",
@@ -157,27 +163,39 @@ if (Object.keys(newErrors).length > 0) {
     try {
 
       const payload = {
-        vendorId:
-          purchaseType === "vendor"
-            ? Number(purchase.vendorId)
-            : null,
+  vendorId:
+    purchaseType === "vendor"
+      ? Number(purchase.vendorId)
+      : null,
 
-        farmerId:
-          purchaseType === "farmer"
-            ? Number(purchase.farmerId)
-            : null,
+  farmerId:
+    purchaseType === "farmer"
+      ? Number(purchase.farmerId)
+      : null,
 
-        remarks: purchase.remarks,
+  remarks: purchase.remarks,
 
-        items: [
-          {
-            productId: Number(purchase.productId),
-            usesCrates: false,
-            quantity: Number(purchase.quantity),
-            rate: Number(purchase.rate),
-          },
-        ],
-      };
+  hamali: purchase.hamali
+    ? Number(purchase.hamali)
+    : null,
+
+  commission: purchase.commission
+    ? Number(purchase.commission)
+    : null,
+
+  transportAdvance: purchase.transportAdvance
+    ? Number(purchase.transportAdvance)
+    : null,
+
+  items: [
+    {
+      productId: Number(purchase.productId),
+      usesCrates: false,
+      quantity: Number(purchase.quantity),
+      rate: Number(purchase.rate),
+    },
+  ],
+};
 
       console.log("Purchase Payload:", payload);
 
@@ -188,13 +206,19 @@ if (Object.keys(newErrors).length > 0) {
       console.log(response);
 
       setPurchase({
-        vendorId: "",
-        farmerId: "",
-        productId: "",
-        quantity: "",
-        rate: "",
-        remarks: "",
-      });
+  vendorId: "",
+  farmerId: "",
+  productId: "",
+  unit: "",
+  quantity: "",
+  kg: "",
+  rate: "",
+  remarks: "",
+
+  hamali: "",
+  commission: "",
+  transportAdvance: "",
+});
 setErrors({
   vendorId: "",
   farmerId: "",
@@ -203,14 +227,12 @@ setErrors({
   rate: "",
 });
     } catch (error) {
+  console.log("FULL ERROR:", error);
+  console.log("ERROR RESPONSE:", error.response);
+  console.log("ERROR DATA:", error.response?.data);
 
-      console.error(error);
-
-      alert(
-        error.response?.data?.message ||
-        "Failed to save purchase"
-      );
-    }
+  alert(JSON.stringify(error.response?.data));
+}
   };
   return (
     <Box
@@ -421,7 +443,7 @@ setErrors({
             </Grid>
             {/* Quantity */}
 
-            <Grid item xs={12} md={4}>
+            {/* <Grid item xs={12} md={4}>
               <TextField
   fullWidth
   required
@@ -454,11 +476,88 @@ setErrors({
     ),
   }}
 />
-            </Grid>
+            </Grid> */}
+            <Grid item xs={12} md={3}>
+  <TextField
+  fullWidth
+  type="number"
+  label="Unit"
+  name="unit"
+  value={purchase.unit}
+  onChange={(e) => {
+    const unit = e.target.value;
 
-            {/* Rate */}
+    setPurchase((prev) => ({
+      ...prev,
+      unit,
+      quantity:
+        unit && prev.kg
+          ? Number(unit) * Number(prev.kg)
+          : "",
+    }));
+  }}
+  sx={fieldSx}
+/>
+</Grid>
+<Grid item xs={12} md={3}>
+  <TextField
+    fullWidth
+    type="number"
+    label="KG"
+    name="kg"
+    value={purchase.kg}
+    onChange={(e) => {
+      const kg = e.target.value;
 
-            <Grid item xs={12} md={4}>
+      setPurchase((prev) => ({
+        ...prev,
+        kg,
+        quantity:
+          prev.unit && kg
+            ? Number(prev.unit) * Number(kg)
+            : "",
+      }));
+    }}
+    sx={fieldSx}
+  />
+</Grid>
+
+
+
+<Grid item xs={12} md={4}>
+  <TextField
+    fullWidth
+    required
+    type="number"
+    label="Quantity"
+    name="quantity"
+    value={purchase.quantity}
+    error={!!errors.quantity}
+    helperText={errors.quantity}
+    onChange={(e) => {
+      setPurchase({
+        ...purchase,
+        quantity: e.target.value,
+      });
+
+      setErrors({
+        ...errors,
+        quantity: "",
+      });
+    }}
+    sx={fieldSx}
+    InputProps={{
+      startAdornment: (
+        <InputAdornment position="start">
+          <Numbers color="action" />
+        </InputAdornment>
+      ),
+    }}
+  />
+</Grid>
+            
+
+             <Grid item xs={12} md={3}>
               <TextField
   fullWidth
   required
@@ -491,7 +590,7 @@ setErrors({
     ),
   }}
 />
-            </Grid>
+            </Grid> 
 
             {/* Total Amount */}
 
@@ -537,6 +636,64 @@ setErrors({
                 }}
               />
             </Grid>
+            {/* Charges */}
+
+<Grid item xs={12} md={4}>
+  <TextField
+    fullWidth
+    label="Hamali"
+    name="hamali"
+    value={purchase.hamali}
+    onChange={handleChange}
+    sx={fieldSx}
+    type="number"
+    InputProps={{
+      startAdornment: (
+        <InputAdornment position="start">
+          <CurrencyRupee fontSize="small" />
+        </InputAdornment>
+      ),
+    }}
+  />
+</Grid>
+
+<Grid item xs={12} md={4}>
+  <TextField
+    fullWidth
+    label="Commission"
+    name="commission"
+    value={purchase.commission}
+    onChange={handleChange}
+    sx={fieldSx}
+    type="number"
+    InputProps={{
+      startAdornment: (
+        <InputAdornment position="start">
+          <CurrencyRupee fontSize="small" />
+        </InputAdornment>
+      ),
+    }}
+  />
+</Grid>
+
+<Grid item xs={12} md={4}>
+  <TextField
+    fullWidth
+    label="Transport Advance"
+    name="transportAdvance"
+    value={purchase.transportAdvance}
+    onChange={handleChange}
+    sx={fieldSx}
+    type="number"
+    InputProps={{
+      startAdornment: (
+        <InputAdornment position="start">
+          <CurrencyRupee fontSize="small" />
+        </InputAdornment>
+      ),
+    }}
+  />
+</Grid>
 
             {/* Save Button */}
 
