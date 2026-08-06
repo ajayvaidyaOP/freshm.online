@@ -1,16 +1,23 @@
-frehsm-erp
+# frehsm-erp
 
-# Backend
+## Backend
+
 cd ~/freshm.online/pvtapp
+
 ./gradlew clean build
+
 sudo systemctl restart freshm
+
 sudo systemctl status freshm
 
-# Frontend
+## Frontend
+
 cd ~/freshm.online/freshm-frontend
+
 npm run build
 
 rm -rf /var/www/freshm/*
+
 cp -r dist/* /var/www/freshm/
 
 chown -R www-data:www-data /var/www/freshm
