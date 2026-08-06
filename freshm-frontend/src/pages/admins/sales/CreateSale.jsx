@@ -129,9 +129,9 @@ const [vehicleNumber, setVehicleNumber] = useState("");
     partyLabel: "Buyer",
     partyName: saved.buyerName || "--", 
 
-   transporterName: saved.transporterName,
-  transporterContact: saved.transporterContact,
-  vehicleNumber: saved.vehicleNumber,
+transporterName: saved?.transporterName || transporterName,
+transporterContact: saved?.transporterContact || transporterContact,
+vehicleNumber: saved?.vehicleNumber || vehicleNumber,
     items: (saved.items || []).map((it) => ({ desc: it.description, item: it.itemCount, weight: it.weightKg, price: it.price, amount: it.amount })),
     charges: [
       { label: "Hamali", amount: saved.hamali },
