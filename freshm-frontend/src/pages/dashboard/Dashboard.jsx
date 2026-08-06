@@ -93,7 +93,13 @@ export default function Dashboard(){
 
 return (
 
-<Box>
+<Box
+  sx={{
+    pt: 6,
+    px: 3,
+    pb: 3,
+  }}
+>
 
 
 <Typography

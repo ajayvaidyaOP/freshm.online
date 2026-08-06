@@ -77,7 +77,7 @@ export default function Invoices() {
       display="flex"
       justifyContent="space-between"
       alignItems="center"
-      mb={4}
+      mb={2}
     >
 
       <Typography
@@ -130,6 +130,7 @@ export default function Invoices() {
       <Card
         elevation={0}
         sx={{
+           mt: 2,
           borderRadius: 4,
           background: palette.paper,
           border: `1px solid ${palette.line}`,

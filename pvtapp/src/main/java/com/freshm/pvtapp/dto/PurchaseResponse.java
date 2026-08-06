@@ -12,6 +12,9 @@ public class PurchaseResponse {
     private String farmerName;
     private Double totalQuantity;
     private Double totalAmount;
+    private Double hamali;
+    private Double commission;
+    private Double transportAdvance;
     private String paymentStatus;
     private List<PurchaseItemResponse> items;
 
@@ -21,10 +24,10 @@ public class PurchaseResponse {
 
     // Parameterized Constructor
     public PurchaseResponse(Long id, String purchaseNumber, LocalDate purchaseDate,
-                            String vendorName, String farmerName,
-                            Double totalQuantity, Double totalAmount,
-                            String paymentStatus,
-                            List<PurchaseItemResponse> items) {
+            String vendorName, String farmerName,
+            Double totalQuantity, Double totalAmount,
+            String paymentStatus,
+            List<PurchaseItemResponse> items) {
         this.id = id;
         this.purchaseNumber = purchaseNumber;
         this.purchaseDate = purchaseDate;
@@ -92,6 +95,30 @@ public class PurchaseResponse {
 
     public void setTotalAmount(Double totalAmount) {
         this.totalAmount = totalAmount;
+    }
+
+    public Double getHamali() {
+        return hamali;
+    }
+
+    public void setHamali(Double hamali) {
+        this.hamali = hamali;
+    }
+
+    public Double getCommission() {
+        return commission;
+    }
+
+    public void setCommission(Double commission) {
+        this.commission = commission;
+    }
+
+    public Double getTransportAdvance() {
+        return transportAdvance;
+    }
+
+    public void setTransportAdvance(Double transportAdvance) {
+        this.transportAdvance = transportAdvance;
     }
 
     public String getPaymentStatus() {

@@ -34,7 +34,9 @@ export default function CreateSale() {
   const [hamali, setHamali] = useState("");
   const [commission, setCommission] = useState("");
   const [transportAdvance, setTransportAdvance] = useState("");
-
+const [transporterName, setTransporterName] = useState("");
+const [transporterContact, setTransporterContact] = useState("");
+const [vehicleNumber, setVehicleNumber] = useState("");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(null);   // SaleResponse after save
   const [toast, setToast] = useState(null);
@@ -134,7 +136,14 @@ export default function CreateSale() {
   const fieldSx = { "& .MuiOutlinedInput-root": { borderRadius: 2 } };
 
   return (
-    <Box>
+    
+  <Box
+    sx={{
+      p: 4,
+      minHeight: "100vh",
+      background: "#F3EDDF",
+    }}
+  >
       <Typography variant="h4" sx={{ fontWeight: 700, color: forest }}>Create Sale Invoice</Typography>
       <Typography variant="body2" sx={{ color: "#5b6b60", mb: 3 }}>
         Sell to a buyer, set the letterhead name, and generate the bill PDF.
@@ -214,7 +223,42 @@ export default function CreateSale() {
               <Grid item xs={12} sm={4}><TextField fullWidth size="small" type="number" label="Comission" value={commission} onChange={(e) => setCommission(e.target.value)} sx={fieldSx} /></Grid>
               <Grid item xs={12} sm={4}><TextField fullWidth size="small" type="number" label="Transport Advance" value={transportAdvance} onChange={(e) => setTransportAdvance(e.target.value)} sx={fieldSx} /></Grid>
             </Grid>
+           <Grid container spacing={2} sx={{ mt: 1 }}>
 
+  <Grid item xs={12} sm={4}>
+    <TextField
+      fullWidth
+      size="small"
+      label="Transporter Name"
+      value={transporterName}
+      onChange={(e) => setTransporterName(e.target.value)}
+      sx={fieldSx}
+    />
+  </Grid>
+
+  <Grid item xs={12} sm={4}>
+    <TextField
+      fullWidth
+      size="small"
+      label="Transporter Contact Number"
+      value={transporterContact}
+      onChange={(e) => setTransporterContact(e.target.value)}
+      sx={fieldSx}
+    />
+  </Grid>
+
+  <Grid item xs={12} sm={4}>
+    <TextField
+      fullWidth
+      size="small"
+      label="Vehicle Number"
+      value={vehicleNumber}
+      onChange={(e) => setVehicleNumber(e.target.value)}
+      sx={fieldSx}
+    />
+  </Grid>
+
+</Grid>
             <Box sx={{ mt: 3, p: 2, borderRadius: 3, background: forest, color: "#fff", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <span>Grand Total</span>
               <span style={{ fontFamily: "monospace", fontSize: 24, fontWeight: 700 }}>₹ {grandTotal.toLocaleString("en-IN")}</span>
@@ -228,7 +272,17 @@ export default function CreateSale() {
 
         {/* live bill preview / final bill */}
         <Grid item xs={12} md={5}>
-          <Box sx={{ position: "sticky", top: 16 }}>
+          <Box
+  sx={{
+    position: "sticky",
+    top: 16,
+    background: "#FAF6EC",
+    borderRadius: 4,
+    p: 2,
+    border: "1px solid rgba(201,162,75,.35)",
+    boxShadow: "0 25px 50px rgba(0,0,0,.08)",
+  }}
+>
             <Typography variant="overline" sx={{ color: gold }}>{saved ? "Generated bill" : "Live preview"}</Typography>
             <Box sx={{ transform: { md: "scale(0.92)" }, transformOrigin: "top center" }}>
               <InvoiceBill type="SALE" data={billData} logoSrc={logo} />

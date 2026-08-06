@@ -68,23 +68,22 @@ public class Purchase extends BaseEntity {
     @Column(nullable = false)
     private Double totalAmount = 0.0;
 
-    @OneToMany(
-            mappedBy = "purchase",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
+    @Column(nullable = false)
+    private Double hamali = 0.0;
+
+    @Column(nullable = false)
+    private Double commission = 0.0;
+
+    @Column(nullable = false)
+    private Double transportAdvance = 0.0;
+
+    @OneToMany(mappedBy = "purchase", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PurchaseItem> items = new ArrayList<>();
 
-    @OneToMany(
-            mappedBy = "purchase",
-            cascade = CascadeType.ALL
-    )
+    @OneToMany(mappedBy = "purchase", cascade = CascadeType.ALL)
     private List<Payment> payments = new ArrayList<>();
 
-    @OneToOne(
-            mappedBy = "purchase",
-            cascade = CascadeType.ALL
-    )
+    @OneToOne(mappedBy = "purchase", cascade = CascadeType.ALL)
     private Invoice invoice;
 
     // Default Constructor
@@ -93,11 +92,11 @@ public class Purchase extends BaseEntity {
 
     // Parameterized Constructor
     public Purchase(Long id, String purchaseNumber, LocalDate purchaseDate,
-                    Vendor vendor, Farmer farmer, Company company,
-                    String remarks, PaymentStatus paymentStatus,
-                    PaymentMode paymentMode, Double totalQuantity,
-                    Double totalAmount, List<PurchaseItem> items,
-                    List<Payment> payments, Invoice invoice) {
+            Vendor vendor, Farmer farmer, Company company,
+            String remarks, PaymentStatus paymentStatus,
+            PaymentMode paymentMode, Double totalQuantity,
+            Double totalAmount, List<PurchaseItem> items,
+            List<Payment> payments, Invoice invoice) {
 
         this.id = id;
         this.purchaseNumber = purchaseNumber;
@@ -114,13 +113,13 @@ public class Purchase extends BaseEntity {
         this.payments = payments;
         this.invoice = invoice;
     }
-    
+
     public static Builder builder() {
         return new Builder();
     }
-    
+
     public static class Builder {
-    	
+
         private Long id;
         private String purchaseNumber;
         private LocalDate purchaseDate;
@@ -132,6 +131,9 @@ public class Purchase extends BaseEntity {
         private PaymentMode paymentMode;
         private Double totalQuantity = 0.0;
         private Double totalAmount = 0.0;
+        private Double hamali = 0.0;
+        private Double commission = 0.0;
+        private Double transportAdvance = 0.0;
         private List<PurchaseItem> items = new ArrayList<>();
         private List<Payment> payments = new ArrayList<>();
         private Invoice invoice;
@@ -191,6 +193,21 @@ public class Purchase extends BaseEntity {
             return this;
         }
 
+        public Builder hamali(Double hamali) {
+            this.hamali = hamali;
+            return this;
+        }
+
+        public Builder commission(Double commission) {
+            this.commission = commission;
+            return this;
+        }
+
+        public Builder transportAdvance(Double transportAdvance) {
+            this.transportAdvance = transportAdvance;
+            return this;
+        }
+
         public Builder items(List<PurchaseItem> items) {
             this.items = items;
             return this;
@@ -219,6 +236,9 @@ public class Purchase extends BaseEntity {
             purchase.setPaymentMode(paymentMode);
             purchase.setTotalQuantity(totalQuantity);
             purchase.setTotalAmount(totalAmount);
+            purchase.setHamali(hamali);
+            purchase.setCommission(commission);
+            purchase.setTransportAdvance(transportAdvance);
             purchase.setItems(items);
             purchase.setPayments(payments);
             purchase.setInvoice(invoice);
@@ -338,6 +358,30 @@ public class Purchase extends BaseEntity {
 
     public void setInvoice(Invoice invoice) {
         this.invoice = invoice;
+    }
+
+    public Double getHamali() {
+        return hamali;
+    }
+
+    public void setHamali(Double hamali) {
+        this.hamali = hamali;
+    }
+
+    public Double getCommission() {
+        return commission;
+    }
+
+    public void setCommission(Double commission) {
+        this.commission = commission;
+    }
+
+    public Double getTransportAdvance() {
+        return transportAdvance;
+    }
+
+    public void setTransportAdvance(Double transportAdvance) {
+        this.transportAdvance = transportAdvance;
     }
 
     @Override

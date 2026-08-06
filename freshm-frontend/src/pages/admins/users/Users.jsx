@@ -75,7 +75,7 @@ export default function Users() {
         display="flex"
         justifyContent="space-between"
         alignItems="center"
-        mb={4}
+        mb={2}
       >
         <Box>
           <Typography
@@ -125,14 +125,15 @@ export default function Users() {
       {/* Card */}
 
       <Card
-        elevation={0}
-        sx={{
-          borderRadius: 4,
-          background: palette.paper,
-          border: `1px solid ${palette.line}`,
-          boxShadow: "0 25px 50px rgba(0,0,0,.08)",
-        }}
-      >
+  elevation={0}
+  sx={{
+    mt: 2,   // 👈 हे add कर
+    borderRadius: 4,
+    background: palette.paper,
+    border: `1px solid ${palette.line}`,
+    boxShadow: "0 25px 50px rgba(0,0,0,.08)",
+  }}
+>
         <CardContent sx={{ p: 4 }}>
           <Typography
             sx={{

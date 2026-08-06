@@ -18,3 +18,7 @@ export const getPaymentById = async (id) => {
 export const deletePayment = async (id) => {
   await api.delete(`/payments/${id}`);
 };
+export const getAllPurchases = async () => {
+  const response = await api.get("/purchases");
+  return response.data;
+};
