@@ -76,7 +76,12 @@ const [vehicleNumber, setVehicleNumber] = useState("");
     invoiceNumber: saved?.saleNumber || "(auto on save)",
     date: saleDate,
     partyLabel: "Buyer",
-    partyName: selectedBuyer?.buyerName || "--",
+    partyName: selectedBuyer?.buyerName || "--", 
+
+    transpoterName,
+    transpoterContact,
+    vehicleNumber,
+    
     items: items.filter((it) => it.description).map((it) => ({
       desc: it.description, item: it.itemCount, weight: it.weightKg, price: it.price, amount: lineAmount(it),
     })),
@@ -87,7 +92,7 @@ const [vehicleNumber, setVehicleNumber] = useState("");
     ].filter((c) => c.amount > 0),
     grandTotal,
     amountInWords: saved?.amountInWords || "",
-  }), [letterHeadName, company, saved, saleDate, selectedBuyer, items, hamali, commission, transportAdvance, grandTotal]);
+  }), [letterHeadName, company, saved, saleDate, selectedBuyer, items, hamali, commission, transportAdvance, grandTotal, transpoterName, transpoterContact, vehicleNumber,]);
 
   const save = async () => {
     const validItems = items.filter((it) => it.description);
@@ -122,7 +127,11 @@ const [vehicleNumber, setVehicleNumber] = useState("");
     invoiceNumber: saved.saleNumber,
     date: saved.saleDate,
     partyLabel: "Buyer",
-    partyName: saved.buyerName || "--",
+    partyName: saved.buyerName || "--", 
+
+   transporterName: saved.transporterName,
+  transporterContact: saved.transporterContact,
+  vehicleNumber: saved.vehicleNumber,
     items: (saved.items || []).map((it) => ({ desc: it.description, item: it.itemCount, weight: it.weightKg, price: it.price, amount: it.amount })),
     charges: [
       { label: "Hamali", amount: saved.hamali },
