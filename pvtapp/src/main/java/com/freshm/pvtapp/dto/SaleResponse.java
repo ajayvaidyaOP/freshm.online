@@ -19,6 +19,9 @@ public class SaleResponse {
     private Double grandTotal;
     private String amountInWords;
     private String remarks;
+    private String transporterName;
+    private String transporterContact;
+    private String vehicleNumber;
     private List<SaleItemResponse> items;
 
     public Long getId() { return id; }
@@ -53,4 +56,11 @@ public class SaleResponse {
     public void setRemarks(String v) { this.remarks = v; }
     public List<SaleItemResponse> getItems() { return items; }
     public void setItems(List<SaleItemResponse> v) { this.items = v; }
+
+    public String getTransporterName() { return transporterName; }
+    public void setTransporterName(String v) { this.transporterName = v; }
+    public String getTransporterContact() { return transporterContact; }
+    public void setTransporterContact(String v) { this.transporterContact = v; }
+    public String getVehicleNumber() { return vehicleNumber; }
+    public void setVehicleNumber(String v) { this.vehicleNumber = v; }
 }

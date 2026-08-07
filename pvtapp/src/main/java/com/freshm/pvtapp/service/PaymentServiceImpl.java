@@ -10,6 +10,7 @@ import com.freshm.pvtapp.entity.Company;
 import com.freshm.pvtapp.entity.Payment;
 import com.freshm.pvtapp.entity.Purchase;
 import com.freshm.pvtapp.enums.PaymentMode;
+import com.freshm.pvtapp.enums.PaymentStatus;
 import com.freshm.pvtapp.exception.ResourceNotFoundException;
 import com.freshm.pvtapp.repository.PaymentRepository;
 import com.freshm.pvtapp.repository.PurchaseRepository;
@@ -72,6 +73,22 @@ public class PaymentServiceImpl implements PaymentService {
                 )
                 .build();
                         Payment saved = paymentRepository.save(payment);
+
+        // Update the purchase's payment status from the sum of its payments.
+        double totalPaid = paymentRepository
+                .findAllByPurchaseId(purchase.getId())
+                .stream()
+                .mapToDouble(p -> p.getAmount() != null ? p.getAmount() : 0d)
+                .sum();
+        double due = purchase.getTotalAmount() != null ? purchase.getTotalAmount() : 0d;
+        if (due > 0 && totalPaid >= due) {
+            purchase.setPaymentStatus(PaymentStatus.PAID);
+        } else if (totalPaid > 0) {
+            purchase.setPaymentStatus(PaymentStatus.PARTIAL);
+        } else {
+            purchase.setPaymentStatus(PaymentStatus.UNPAID);
+        }
+        purchaseRepository.save(purchase);
 
         PaymentResponse response = new PaymentResponse();
 

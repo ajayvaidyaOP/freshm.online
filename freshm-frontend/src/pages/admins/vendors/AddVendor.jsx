@@ -118,41 +118,17 @@ if (!form.mobile.trim()) {
   newErrors.mobile = "Mobile Number must be 10 digits";
 }
 
-if (!form.email.trim()) {
-  newErrors.email = "Email is required";
-} else if (!/\S+@\S+\.\S+/.test(form.email)) {
+// Everything below is OPTIONAL — only checked if the user typed something.
+if (form.email.trim() && !/\S+@\S+\.\S+/.test(form.email)) {
   newErrors.email = "Please enter a valid Email Address";
 }
-
-if (!form.address.trim()) {
-  newErrors.address = "Address is required";
-}
-
-if (!form.aadharNumber.trim()) {
-  newErrors.aadharNumber = "Aadhar Number is required";
-} else if (!/^\d{12}$/.test(form.aadharNumber)) {
+if (form.aadharNumber.trim() && !/^\d{12}$/.test(form.aadharNumber.trim())) {
   newErrors.aadharNumber = "Aadhar Number must be 12 digits";
 }
-
-if (!form.panNumber.trim()) {
-  newErrors.panNumber = "PAN Number is required";
-} else if (!/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(form.panNumber.toUpperCase())) {
-  newErrors.panNumber = "Invalid PAN Number";
+if (form.panNumber.trim() && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(form.panNumber.trim().toUpperCase())) {
+  newErrors.panNumber = "PAN must look like ABCDE1234F";
 }
-
-if (!form.bankName.trim()) {
-  newErrors.bankName = "Bank Name is required";
-}
-
-if (!form.accountNumber.trim()) {
-  newErrors.accountNumber = "Account Number is required";
-}
-
-if (!form.ifscCode.trim()) {
-  newErrors.ifscCode = "IFSC Code is required";
-} else if (
-  !/^[A-Z]{4}0[A-Z0-9]{6}$/.test(form.ifscCode.toUpperCase())
-) {
+if (form.ifscCode.trim() && !/^[A-Z]{4}0[A-Z0-9]{6}$/.test(form.ifscCode.trim().toUpperCase())) {
   newErrors.ifscCode = "Invalid IFSC Code";
 }
 

@@ -58,151 +58,6 @@ const CSS = `
 
 const rs = (n) => `Rs ${Number(n || 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
-// function BillBody({ type, data, logoSrc }) {
-//   const d = data || {};
-//   const items = d.items || [];
-//   const charges = d.charges || [];
-//   return (
-//     <div className="inv-wrap" id="inv-print-area">
-//       {/* <div className="inv-bless">॥ श्री तुळजाभवानी प्रसन्नवुतु प्रसन्न ॥<br />॥ श्री गजानन प्रसन्न ॥</div> */}
-
-//       <div className="inv-head">
-//         {logoSrc ? <img className="inv-logo" src={logoSrc} alt="logo" /> : <span className="inv-logo" />}
-//         <div className="inv-title">
-//           <p className="inv-company">{d.letterHeadName || "COMPANY NAME"}</p>
-//         </div>
-//         <span style={{ width: 96, flex: "0 0 auto" }} />
-//       </div>
-
-//       <hr className="inv-hr" />
-
-//       <div className="inv-meta">
-//   <span><b>Invoice No :</b> {d.invoiceNumber || "--"}</span>
-//   <span><b>Date :</b> {d.date || "--"}</span>
-// </div>
-
-// <div style={{ marginTop: 15 }}>
-
-//   <div><b>{d.partyLabel || "Buyer"} :</b> {d.partyName || "--"}</div>
-
-//   <div style={{ marginTop: 5 }}>
-//     <b>Address :</b> {d.partyAddress || "--"}
-//   </div>
-
-//   <div style={{ marginTop: 5 }}>
-//     <b>Transport :</b> {d.transportName || "--"}
-//   </div>
-
-//   <div style={{ marginTop: 5 }}>
-//     <b>Vehicle No :</b> {d.vehicleNumber || "--"}
-//   </div>
-
-//   <div style={{ marginTop: 5 }}>
-//     <b>Mobile :</b> {d.partyMobile || "--"}
-//   </div>
-
-// </div>
-//       <table className="inv">
-//         {/* <thead>
-//           <tr>
-//             <th style={{ width: 44 }}>Sr</th>
-//             <th>Material Desc.</th>
-//             <th style={{ width: 90 }}>Item</th>
-//             <th style={{ width: 110 }}>Weight</th>
-//             <th style={{ width: 100 }}>Price</th>
-//             <th style={{ width: 140 }}>Total Amount</th>
-//           </tr>
-//         </thead> */}
-//         <thead>
-// <tr>
-
-// <th>Sr No.</th>
-
-// <th>Particulars</th>
-
-// <th>Unit</th>
-
-// <th>Quantity</th>
-
-// <th>Rate</th>
-
-// <th>Amount</th>
-
-// </tr>
-// </thead>
-//         <tbody>
-//           {items.map((it, i) => (
-//             <tr key={i}>
-//               <td className="c">{i + 1}</td>
-//               <td>{it.desc}</td>
-//               <td className="c">{it.item != null && it.item !== "" ? Number(it.item).toFixed(2) : ""}</td>
-//               <td className="c">{it.weight ? `${Number(it.weight).toLocaleString("en-IN")} kg` : ""}</td>
-//               <td className="c">{it.price != null && it.price !== "" ? `${Number(it.price).toFixed(2)} rs` : ""}</td>
-//               <td className="r">{rs(it.amount)}</td>
-//             </tr>
-//           ))}
-//           {charges.map((c, i) => (
-//             <tr className="inv-charge" key={`c${i}`}>
-//               <td /><td className="lbl" colSpan={4}>{c.label}</td>
-//               <td className="r">{rs(c.amount)}</td>
-//             </tr>
-//           ))}
-//           <tr className="inv-grand">
-//             <td /><td colSpan={4}>Grand Total</td>
-//             <td className="r">{rs(d.grandTotal)}</td>
-//           </tr>
-//         </tbody>
-//       </table>
-
-//       <div className="inv-words">{d.amountInWords || ""}</div>
-
-//       <div className="inv-sign">
-//         <div className="for">For {d.letterHeadName || "COMPANY NAME"}</div>
-//         <div className="line">Authorized Signatory</div>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default function InvoiceBill({ type = "SALE", data, logoSrc }) {
-//   const ref = useRef(null);
-
-//   const download = () => {
-//     const html = ref.current?.querySelector("#inv-print-area")?.outerHTML || "";
-//     const w = window.open("", "_blank", "width=900,height=1000");
-//     if (!w) return;
-//     w.document.write(
-//       `<html><head><title>${type === "PURCHASE" ? "Purchase" : "Sale"} Invoice</title>` +
-//       `<style>${CSS}</style></head><body>${html}` +
-//       `<script>window.onload=function(){setTimeout(function(){window.print();},250);};<\/script>` +
-//       `</body></html>`
-//     );
-//     w.document.close();
-//   };
-
-//   return (
-//     <div>
-//       <style>{CSS}</style>
-//       <div className="no-print" style={{ display: "flex", justifyContent: "flex-end", marginBottom: 12 }}>
-//         <button
-//           onClick={download}
-//           style={{
-//             background: "#0F2E20", color: "#fff", border: "none", borderRadius: 10,
-//             padding: "10px 18px", fontWeight: 600, cursor: "pointer", fontSize: 14,
-//           }}
-//         >
-//           Download / Print PDF
-//         </button>
-//       </div>
-//       <div ref={ref} style={{ border: "1px solid #eee", boxShadow: "0 10px 40px -20px rgba(0,0,0,.4)" }}>
-//         <BillBody type={type} data={data} logoSrc={logoSrc} />
-//       </div>
-//     </div>
-//   );
-// }
-
-
-
 function BillBody({ type, data, logoSrc }) {
   const d = data || {};
   const items = d.items || [];
@@ -387,7 +242,7 @@ function BillBody({ type, data, logoSrc }) {
     <tr>
 
       <td>
-        MOBILE NO : {d.partyMobile || "--"}
+        MOBILE NO : {d.transportMobile || "--"}
       </td>
 
       <td colSpan={4}></td>
@@ -536,10 +391,11 @@ function BillBody({ type, data, logoSrc }) {
     </div>
   );
 }
-export default function InvoiceBill({ type = "SALE", data, logoSrc }) {
+export default function InvoiceBill({ type = "SALE", data, logoSrc, canDownload = true }) {
   const ref = useRef(null);
 
   const download = () => {
+    if (!canDownload) return;
     const html =
       ref.current?.querySelector("#inv-print-area")?.outerHTML || "";
 
@@ -582,6 +438,7 @@ export default function InvoiceBill({ type = "SALE", data, logoSrc }) {
       >
         <button
           onClick={download}
+          disabled={!canDownload}
           style={{
             background: "#0F2E20",
             color: "#fff",
@@ -591,7 +448,7 @@ export default function InvoiceBill({ type = "SALE", data, logoSrc }) {
             cursor: "pointer",
           }}
         >
-          Download / Print PDF
+          {canDownload ? "Download / Print PDF" : "Save the bill first"}
         </button>
       </div>
 

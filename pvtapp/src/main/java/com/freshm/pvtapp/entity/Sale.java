@@ -51,6 +51,11 @@ public class Sale extends BaseEntity {
     @Column(length = 500)
     private String remarks;
 
+    // transport details printed on the invoice
+    private String transporterName;
+    private String transporterContact;
+    private String vehicleNumber;
+
     @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SaleItem> items = new ArrayList<>();
 
@@ -72,6 +77,9 @@ public class Sale extends BaseEntity {
         public Builder grandTotal(Double v) { s.grandTotal = v; return this; }
         public Builder amountInWords(String v) { s.amountInWords = v; return this; }
         public Builder remarks(String v) { s.remarks = v; return this; }
+        public Builder transporterName(String v) { s.transporterName = v; return this; }
+        public Builder transporterContact(String v) { s.transporterContact = v; return this; }
+        public Builder vehicleNumber(String v) { s.vehicleNumber = v; return this; }
         public Sale build() { return s; }
     }
 
@@ -105,4 +113,11 @@ public class Sale extends BaseEntity {
     public void setRemarks(String v) { this.remarks = v; }
     public List<SaleItem> getItems() { return items; }
     public void setItems(List<SaleItem> items) { this.items = items; }
+
+    public String getTransporterName() { return transporterName; }
+    public void setTransporterName(String v) { this.transporterName = v; }
+    public String getTransporterContact() { return transporterContact; }
+    public void setTransporterContact(String v) { this.transporterContact = v; }
+    public String getVehicleNumber() { return vehicleNumber; }
+    public void setVehicleNumber(String v) { this.vehicleNumber = v; }
 }

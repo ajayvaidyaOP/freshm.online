@@ -157,6 +157,8 @@ from "../pages/users/UserInvoices";
 
 
 import Sales from "../pages/admins/sales/Sales";
+import Buyers from "../pages/admins/buyers/Buyers";
+import AddBuyer from "../pages/admins/buyers/AddBuyer";
 import CreateSale from "../pages/admins/sales/CreateSale";
 
 
@@ -322,6 +324,8 @@ element={
 
 <Route path="/admin/sales"     element={<ProtectedRoute allowedRoles={["ADMIN"]}><AdminLayout><Sales/></AdminLayout></ProtectedRoute>} />
 <Route path="/admin/sales/add" element={<ProtectedRoute allowedRoles={["ADMIN"]}><AdminLayout><CreateSale/></AdminLayout></ProtectedRoute>} />
+<Route path="/admin/buyers"     element={<ProtectedRoute allowedRoles={["ADMIN"]}><AdminLayout><Buyers/></AdminLayout></ProtectedRoute>} />
+<Route path="/admin/buyers/add" element={<ProtectedRoute allowedRoles={["ADMIN"]}><AdminLayout><AddBuyer/></AdminLayout></ProtectedRoute>} />
 
 
 

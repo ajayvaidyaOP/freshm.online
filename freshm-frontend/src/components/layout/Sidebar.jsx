@@ -79,8 +79,8 @@ const menuItems = [
   },
 
   {
-    title: "Invoices",
-    path: "/admin/invoices",
+    title: "Buyers",
+    path: "/admin/buyers",
     icon: <ReceiptLongIcon />,
   },
 

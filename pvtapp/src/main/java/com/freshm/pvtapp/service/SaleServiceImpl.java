@@ -64,6 +64,9 @@ public class SaleServiceImpl implements SaleService {
         sale.setCommission(nz(request.getCommission()));
         sale.setTransportAdvance(nz(request.getTransportAdvance()));
         sale.setRemarks(request.getRemarks());
+        sale.setTransporterName(request.getTransporterName());
+        sale.setTransporterContact(request.getTransporterContact());
+        sale.setVehicleNumber(request.getVehicleNumber());
 
         if (request.getBuyerId() != null) {
             Buyer buyer = buyerRepository
@@ -149,6 +152,9 @@ public class SaleServiceImpl implements SaleService {
         r.setGrandTotal(s.getGrandTotal());
         r.setAmountInWords(s.getAmountInWords());
         r.setRemarks(s.getRemarks());
+        r.setTransporterName(s.getTransporterName());
+        r.setTransporterContact(s.getTransporterContact());
+        r.setVehicleNumber(s.getVehicleNumber());
 
         if (s.getBuyer() != null) {
             r.setBuyerId(s.getBuyer().getId());
