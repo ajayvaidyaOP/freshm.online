@@ -171,6 +171,20 @@ const [vehicleNumber, setVehicleNumber] = useState("");
   };
 
   // when saved, feed the REAL response (with number + words) into the bill
+  // Recompute the saved bill on the frontend so the printed amount always matches the form
+  // (Item x Weight x Price), regardless of what the backend stored.
+  const savedItems = (saved?.items || []).map((it) => {
+    const c = Number(it.itemCount) || 0, k = Number(it.weightKg) || 0, p = Number(it.price) || 0;
+    const q = (c > 0 && k > 0) ? c * k : (k > 0 ? k : c);
+    return { desc: it.description, item: it.itemCount, unit: it.itemCount, weightKg: it.weightKg, quantity: q, weight: q, price: it.price, amount: q * p };
+  });
+  const savedCharges = [
+    { label: "Hamali", amount: Number(saved?.hamali) || num(hamali) },
+    { label: "Comission", amount: Number(saved?.commission) || num(commission) },
+    { label: "Transport Advance", amount: Number(saved?.transportAdvance) || num(transportAdvance) },
+  ].filter((c) => c.amount > 0);
+  const savedGrand = savedItems.reduce((sm, r) => sm + r.amount, 0) + savedCharges.reduce((sm, c) => sm + c.amount, 0);
+
   const billData = saved ? {
 
     letterHeadName: saved.letterHeadName,
@@ -188,18 +202,10 @@ const [vehicleNumber, setVehicleNumber] = useState("");
 
     partyLabel: "Buyer",
     partyName: saved.buyerName || "--",
-    items: (saved.items || []).map((it) => {
-      const c = Number(it.itemCount) || 0, k = Number(it.weightKg) || 0;
-      const q = (c > 0 && k > 0) ? c * k : (k > 0 ? k : c);
-      return { desc: it.description, item: it.itemCount, unit: it.itemCount, weightKg: it.weightKg, quantity: q, weight: q, price: it.price, amount: it.amount };
-    }),
-    charges: [
-      { label: "Hamali", amount: saved.hamali },
-      { label: "Comission", amount: saved.commission },
-      { label: "Transport Advance", amount: saved.transportAdvance },
-    ].filter((c) => c.amount > 0),
-    grandTotal: saved.grandTotal,
-    amountInWords: saved.amountInWords || (saved.grandTotal > 0 ? `Rupees ${numberToWordsIndian(saved.grandTotal)} Only.` : ""),
+    items: savedItems,
+    charges: savedCharges,
+    grandTotal: savedGrand,
+    amountInWords: savedGrand > 0 ? `Rupees ${numberToWordsIndian(savedGrand)} Only.` : "",
   } : previewData;
 
   const fieldSx = { "& .MuiOutlinedInput-root": { borderRadius: 2 } };
