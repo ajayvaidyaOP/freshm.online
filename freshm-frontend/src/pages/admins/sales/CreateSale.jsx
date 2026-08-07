@@ -9,6 +9,7 @@ import Inventory2RoundedIcon from "@mui/icons-material/Inventory2Rounded";
 import api from "../../../services/api";
 import { createSale } from "../../../services/saleService";
 import InvoiceBill from "../../../components/bill/InvoiceBill";
+import { numberToWordsIndian } from "../../../utils/numberToWords";
 import logo from "../../../assets/logo.png";
 
 const forest = "#0F2E20";
@@ -73,26 +74,57 @@ const [vehicleNumber, setVehicleNumber] = useState("");
   // live preview data (before save) — matches InvoiceBill's normalized shape
   const previewData = useMemo(() => ({
     letterHeadName: letterHeadName || company?.companyName || "COMPANY NAME",
-    invoiceNumber: saved?.saleNumber || "(auto on save)",
-    date: saleDate,
-    partyLabel: "Buyer",
-    partyName: selectedBuyer?.buyerName || "--", 
 
-    transpoterName,
-    transpoterContact,
+    invoiceNumber: saved?.saleNumber || "—",
+    date: saleDate,
+
+    partyLabel: "Buyer",
+    partyName: selectedBuyer?.buyerName || "--",
+
+    transporterName,
+    transporterContact,
     vehicleNumber,
-    
-    items: items.filter((it) => it.description).map((it) => ({
-      desc: it.description, item: it.itemCount, weight: it.weightKg, price: it.price, amount: lineAmount(it),
-    })),
+    transportName: transporterName,      // InvoiceBill reads d.transportName
+    transportContact: transporterContact,
+    transportMobile: transporterContact, // shown under TRANSPORT DETAILS
+
+    items: items
+      .filter((it) => it.description)
+      .map((it) => ({
+        desc: it.description,
+        item: it.itemCount,
+        unit: it.itemCount,
+        quantity: it.weightKg,
+        weight: it.weightKg,
+        price: it.price,
+        amount: lineAmount(it),
+      })),
+
     charges: [
       { label: "Hamali", amount: num(hamali) },
       { label: "Comission", amount: num(commission) },
       { label: "Transport Advance", amount: num(transportAdvance) },
     ].filter((c) => c.amount > 0),
+
     grandTotal,
-    amountInWords: saved?.amountInWords || "",
-  }), [letterHeadName, company, saved, saleDate, selectedBuyer, items, hamali, commission, transportAdvance, grandTotal, transpoterName, transpoterContact, vehicleNumber,]);
+    amountInWords: saved?.amountInWords || (grandTotal > 0 ? `Rupees ${numberToWordsIndian(grandTotal)} Only.` : ""),
+
+}), [
+    letterHeadName,
+    company,
+    saved,
+    saleDate,
+    selectedBuyer,
+    items,
+    hamali,
+    commission,
+    transportAdvance,
+    grandTotal,
+    transporterName,
+    transporterContact,
+    vehicleNumber
+]);
+
 
   const save = async () => {
     const validItems = items.filter((it) => it.description);
@@ -100,12 +132,21 @@ const [vehicleNumber, setVehicleNumber] = useState("");
     setSaving(true);
     try {
       const res = await createSale({
-        buyerId: buyerId || null,
-        saleDate,
-        letterHeadName,
-        hamali: num(hamali),
-        commission: num(commission),
-        transportAdvance: num(transportAdvance),
+    buyerId: buyerId || null,
+
+    saleDate,
+
+    letterHeadName,
+
+
+    transporterName,
+    transporterContact,
+    vehicleNumber,
+
+
+    hamali: num(hamali),
+    commission: num(commission),
+    transportAdvance: num(transportAdvance),
         items: validItems.map((it) => ({
           productId: it.productId || null,
           description: it.description,
@@ -123,23 +164,30 @@ const [vehicleNumber, setVehicleNumber] = useState("");
 
   // when saved, feed the REAL response (with number + words) into the bill
   const billData = saved ? {
-    letterHeadName: saved.letterHeadName,
-    invoiceNumber: saved.saleNumber,
-    date: saved.saleDate,
-    partyLabel: "Buyer",
-    partyName: saved.buyerName || "--", 
 
-transporterName: saved?.transporterName || transporterName,
-transporterContact: saved?.transporterContact || transporterContact,
-vehicleNumber: saved?.vehicleNumber || vehicleNumber,
-    items: (saved.items || []).map((it) => ({ desc: it.description, item: it.itemCount, weight: it.weightKg, price: it.price, amount: it.amount })),
+    letterHeadName: saved.letterHeadName,
+
+    invoiceNumber: saved.saleNumber,
+
+    date: saved.saleDate,
+
+
+    transportName: transporterName,          // from the form (backend doesn't store transport)
+    transportContact: transporterContact,
+    transportMobile: transporterContact,
+    vehicleNumber: vehicleNumber,
+
+
+    partyLabel: "Buyer",
+    partyName: saved.buyerName || "--",
+    items: (saved.items || []).map((it) => ({ desc: it.description, item: it.itemCount, unit: it.itemCount, quantity: it.weightKg, weight: it.weightKg, price: it.price, amount: it.amount })),
     charges: [
       { label: "Hamali", amount: saved.hamali },
       { label: "Comission", amount: saved.commission },
       { label: "Transport Advance", amount: saved.transportAdvance },
     ].filter((c) => c.amount > 0),
     grandTotal: saved.grandTotal,
-    amountInWords: saved.amountInWords,
+    amountInWords: saved.amountInWords || (saved.grandTotal > 0 ? `Rupees ${numberToWordsIndian(saved.grandTotal)} Only.` : ""),
   } : previewData;
 
   const fieldSx = { "& .MuiOutlinedInput-root": { borderRadius: 2 } };
@@ -294,7 +342,7 @@ vehicleNumber: saved?.vehicleNumber || vehicleNumber,
 >
             <Typography variant="overline" sx={{ color: gold }}>{saved ? "Generated bill" : "Live preview"}</Typography>
             <Box sx={{ transform: { md: "scale(0.92)" }, transformOrigin: "top center" }}>
-              <InvoiceBill type="SALE" data={billData} logoSrc={logo} />
+              <InvoiceBill type="SALE" data={billData} logoSrc={logo} canDownload={!!saved} />
             </Box>
           </Box>
         </Grid>

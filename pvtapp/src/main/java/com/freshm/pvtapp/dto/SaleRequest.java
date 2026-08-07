@@ -12,6 +12,9 @@ public class SaleRequest {
     private Double commission = 0d;
     private Double transportAdvance = 0d;
     private String remarks;
+    private String transporterName;
+    private String transporterContact;
+    private String vehicleNumber;
     private List<SaleItemRequest> items = new ArrayList<>();
 
     public Long getBuyerId() { return buyerId; }
@@ -30,4 +33,11 @@ public class SaleRequest {
     public void setRemarks(String v) { this.remarks = v; }
     public List<SaleItemRequest> getItems() { return items; }
     public void setItems(List<SaleItemRequest> v) { this.items = v; }
+
+    public String getTransporterName() { return transporterName; }
+    public void setTransporterName(String v) { this.transporterName = v; }
+    public String getTransporterContact() { return transporterContact; }
+    public void setTransporterContact(String v) { this.transporterContact = v; }
+    public String getVehicleNumber() { return vehicleNumber; }
+    public void setVehicleNumber(String v) { this.vehicleNumber = v; }
 }
