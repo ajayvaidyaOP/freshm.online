@@ -20,7 +20,14 @@ async function safeGet(url) {
 }
 const emptyItem = () => ({ productId: "", description: "", itemCount: "", weightKg: "", price: "" });
 const num = (v) => (v === "" || v == null ? 0 : Number(v));
-const lineAmount = (it) => (num(it.weightKg) > 0 ? num(it.weightKg) * num(it.price) : num(it.itemCount) * num(it.price));
+// itemCount = number of boxes/items, weightKg = kg per box, price = per kg
+const totalKg = (it) => {
+  const count = num(it.itemCount), kg = num(it.weightKg);
+  if (count > 0 && kg > 0) return count * kg;   // boxes × kg/box = total kg
+  if (kg > 0) return kg;                          // total kg entered directly
+  return count;                                  // pieces (price is per piece)
+};
+const lineAmount = (it) => totalKg(it) * num(it.price);
 
 export default function CreateSale() {
   const [buyers, setBuyers] = useState([]);
@@ -94,8 +101,9 @@ const [vehicleNumber, setVehicleNumber] = useState("");
         desc: it.description,
         item: it.itemCount,
         unit: it.itemCount,
-        quantity: it.weightKg,
-        weight: it.weightKg,
+        weightKg: it.weightKg,
+        quantity: totalKg(it),
+        weight: totalKg(it),
         price: it.price,
         amount: lineAmount(it),
       })),
@@ -180,7 +188,11 @@ const [vehicleNumber, setVehicleNumber] = useState("");
 
     partyLabel: "Buyer",
     partyName: saved.buyerName || "--",
-    items: (saved.items || []).map((it) => ({ desc: it.description, item: it.itemCount, unit: it.itemCount, quantity: it.weightKg, weight: it.weightKg, price: it.price, amount: it.amount })),
+    items: (saved.items || []).map((it) => {
+      const c = Number(it.itemCount) || 0, k = Number(it.weightKg) || 0;
+      const q = (c > 0 && k > 0) ? c * k : (k > 0 ? k : c);
+      return { desc: it.description, item: it.itemCount, unit: it.itemCount, weightKg: it.weightKg, quantity: q, weight: q, price: it.price, amount: it.amount };
+    }),
     charges: [
       { label: "Hamali", amount: saved.hamali },
       { label: "Comission", amount: saved.commission },
@@ -241,6 +253,7 @@ const [vehicleNumber, setVehicleNumber] = useState("");
                   <TableCell>Material Desc.</TableCell>
                   <TableCell width={80}>Item</TableCell>
                   <TableCell width={90}>Weight kg</TableCell>
+                  <TableCell width={90}>Quantity</TableCell>
                   <TableCell width={80}>Price</TableCell>
                   <TableCell width={100} align="right">Amount</TableCell>
                   <TableCell width={40} />
@@ -264,6 +277,7 @@ const [vehicleNumber, setVehicleNumber] = useState("");
                     </TableCell>
                     <TableCell><TextField variant="standard" type="number" value={it.itemCount} onChange={(e) => setItem(i, "itemCount", e.target.value)} /></TableCell>
                     <TableCell><TextField variant="standard" type="number" value={it.weightKg} onChange={(e) => setItem(i, "weightKg", e.target.value)} /></TableCell>
+                    <TableCell align="right" sx={{ fontFamily: "monospace", color: "#5b6b60" }}>{totalKg(it).toLocaleString("en-IN")}</TableCell>
                     <TableCell><TextField variant="standard" type="number" value={it.price} onChange={(e) => setItem(i, "price", e.target.value)} /></TableCell>
                     <TableCell align="right" sx={{ fontFamily: "monospace", fontWeight: 600 }}>{lineAmount(it).toLocaleString("en-IN")}</TableCell>
                     <TableCell>

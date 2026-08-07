@@ -70,6 +70,12 @@ const menuItems = [
     icon: <ShoppingCartIcon />,
   },
 
+  {
+    title: "Purchase Invoice",
+    path: "/admin/purchase/invoice",
+    icon: <ReceiptLongRoundedIcon />,
+  },
+
   { title: "Sales", path: "/admin/sales", icon: <ReceiptLongRoundedIcon /> },
 
   {
@@ -79,8 +85,8 @@ const menuItems = [
   },
 
   {
-    title: "Buyers",
-    path: "/admin/buyers",
+    title: "Invoices",
+    path: "/admin/invoices",
     icon: <ReceiptLongIcon />,
   },
 

@@ -259,6 +259,7 @@ function BillBody({ type, data, logoSrc }) {
       <th style={{ width: 60 }}>Sr No.</th>
       <th>Particulars</th>
       <th style={{ width: 90 }}>Unit</th>
+      <th style={{ width: 90 }}>Weight Kg</th>
       <th style={{ width: 90 }}>Quantity</th>
       <th style={{ width: 100 }}>Rate</th>
       <th style={{ width: 140 }}>Amount</th>
@@ -277,6 +278,10 @@ function BillBody({ type, data, logoSrc }) {
 
         <td className="c">
           {it.unit || "-"}
+        </td>
+
+        <td className="c">
+          {it.weightKg ?? "-"}
         </td>
 
         <td className="c">
@@ -300,7 +305,7 @@ function BillBody({ type, data, logoSrc }) {
       <tr key={i}>
         <td></td>
 
-        <td colSpan={4}>
+        <td colSpan={5}>
           <b>{c.label}</b>
         </td>
 
@@ -315,7 +320,7 @@ function BillBody({ type, data, logoSrc }) {
 <tr className="inv-grand">
   <td></td>
 
-  <td colSpan={4}>
+  <td colSpan={5}>
     Grand Total
   </td>
 

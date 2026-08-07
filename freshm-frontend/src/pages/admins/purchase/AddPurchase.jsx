@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
   Typography,
@@ -31,6 +31,7 @@ import {
   getAllFarmers,
   getAllProducts,
 } from "../../../services/purchaseService";
+import PurchaseBill from "../../../components/bill/PurchaseBill";
 
 const palette = {
   forestDeep: "#0B2F22",
@@ -70,6 +71,13 @@ export default function AddPurchase() {
   const [vendors, setVendors] = useState([]);
   const [farmers, setFarmers] = useState([]);
   const [products, setProducts] = useState([]);
+
+  const [saved, setSaved] = useState(null);
+  const [partyLocation, setPartyLocation] = useState("");
+  const [transportName, setTransportName] = useState("");
+  const [vehicleNo, setVehicleNo] = useState("");
+  const [mobileNo, setMobileNo] = useState("");
+  const me = useMemo(() => JSON.parse(localStorage.getItem("user") || "{}"), []);
 
   const [purchase, setPurchase] = useState({
   vendorId: "",
@@ -198,6 +206,7 @@ if (Object.keys(newErrors).length > 0) {
       console.log("Purchase Payload:", payload);
 
       const response = await createPurchase(payload);
+      setSaved(response);
 
       alert("Purchase Saved Successfully");
       //alert("Purchase ID : " + response.id);
@@ -696,6 +705,16 @@ setErrors({
             {/* Save Button */}
 
             <Grid item xs={12}>
+              <Typography variant="subtitle2" sx={{ mt: 1, mb: 0.5, color: "#0F2E20", fontWeight: 700 }}>
+                Transport details (printed on the invoice)
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={6}><TextField fullWidth size="small" label="Party location" value={partyLocation} onChange={(e) => setPartyLocation(e.target.value)} /></Grid>
+            <Grid item xs={12} sm={6}><TextField fullWidth size="small" label="Transport name" value={transportName} onChange={(e) => setTransportName(e.target.value)} /></Grid>
+            <Grid item xs={12} sm={6}><TextField fullWidth size="small" label="Vehicle number" value={vehicleNo} onChange={(e) => setVehicleNo(e.target.value)} /></Grid>
+            <Grid item xs={12} sm={6}><TextField fullWidth size="small" label="Mobile number" value={mobileNo} onChange={(e) => setMobileNo(e.target.value)} /></Grid>
+
+            <Grid item xs={12}>
               <Button
                 startIcon={<Save />}
                 variant="contained"
@@ -721,6 +740,12 @@ setErrors({
 
         </CardContent>
       </Card>
+
+      {billData && (
+        <Box sx={{ mt: 3 }}>
+          <PurchaseBill data={billData} />
+        </Box>
+      )}
 
     </Box>
   );
