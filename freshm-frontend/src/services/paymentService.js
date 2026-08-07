@@ -22,3 +22,8 @@ export const getAllPurchases = async () => {
   const response = await api.get("/purchases");
   return response.data;
 };
+
+export const getPaymentsByPurchase = async (purchaseId) => {
+  const response = await api.get(`/payments/purchase/${purchaseId}`);
+  return response.data?.data ?? response.data;
+};

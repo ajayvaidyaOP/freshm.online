@@ -1,473 +1,249 @@
-
-
-
-
-
-
-//import React, { useState } from "react";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-//import { savePayment } from "../../../services/paymentService";
 import {
-  savePayment,
-  getAllPurchases,
-} from "../../../services/paymentService";
-
-import {
-    Box,
-    Typography,
-    Card,
-    CardContent,
-    Grid,
-    TextField,
-    Button,
-    MenuItem,
-    Stack,
-    Divider,
-    InputAdornment,
+  Box, Card, CardContent, Grid, Stack, Typography, TextField, MenuItem,
+  Button, InputAdornment, Divider, Snackbar, Alert, CircularProgress, Chip,
 } from "@mui/material";
+import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
+import ReceiptLongRoundedIcon from "@mui/icons-material/ReceiptLongRounded";
+import CurrencyRupeeRoundedIcon from "@mui/icons-material/CurrencyRupeeRounded";
+import AccountBalanceWalletRoundedIcon from "@mui/icons-material/AccountBalanceWalletRounded";
+import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
+import { savePayment, getAllPurchases, getPaymentsByPurchase } from "../../../services/paymentService";
 
-import {
-    Payments,
-    Person,
-    CurrencyRupee,
-    AccountBalanceWallet,
-    ReceiptLong,
-    CalendarToday,
-    Numbers,
-    Save,
-} from "@mui/icons-material";
+const forest = "#0F2E20";
+const gold = "#C9A24B";
 
+const MODES = [
+  { value: "CASH", label: "Cash" },
+  { value: "UPI", label: "UPI" },
+  { value: "CHEQUE", label: "Cheque" },
+  { value: "NET_BANKING", label: "Net Banking" },
+];
 
-const palette = {
-    forestDeep: "#0B2F22",
-    forest: "#0F2E20",
-    gold: "#C9A24B",
-    goldLight: "#E7CD8B",
-    paper: "#FAF6EC",
-    paperDim: "#F3EDDF",
-    ink: "#17231C",
-    inkSoft: "#4B5A50",
-    sage: "#7E9A88",
-    line: "rgba(201,162,75,0.35)",
-};
-
-const fieldSx = {
-    "& .MuiOutlinedInput-root": {
-        borderRadius: 2,
-        background: "#fff",
-        "& fieldset": {
-            borderColor: "rgba(0,0,0,.12)",
-        },
-        "&:hover fieldset": {
-            borderColor: palette.sage,
-        },
-        "&.Mui-focused fieldset": {
-            borderColor: palette.forest,
-            borderWidth: 1.5,
-        },
-    },
-};
-
+const inr = (n) => `₹${Number(n || 0).toLocaleString("en-IN")}`;
 
 export default function AddPayment() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const today = new Date().toISOString().slice(0, 10);
 
-    const [payment, setPayment] = useState({
-        purchaseId: "",
-        amount: "",
-        paymentMode: "",
-        transactionNumber: "",
-        paymentDate: "",
-        // remarks: "",
-    });
-    const [purchases, setPurchases] = useState([]);
-    
-const [errors, setErrors] = useState({
-  purchaseId: "",
-  amount: "",
-  paymentMode: "",
-  transactionNumber: "",
-  paymentDate: "",
-});
-useEffect(() => {
-  loadPurchases();
-}, []);
+  const [purchases, setPurchases] = useState([]);
+  const [selected, setSelected] = useState(null);
+  const [paid, setPaid] = useState(0);
+  const [pending, setPending] = useState(0);
+  const [loadingParty, setLoadingParty] = useState(false);
 
-const loadPurchases = async () => {
-  try {
-    const data = await getAllPurchases();
-    console.log("Purchases =>", data);
-    // setPurchases(data);
-    setPurchases([...data].reverse());
-  } catch (error) {
-    console.error(error);
-  }
-};
-    const handleChange = (e) => {
-        
-        setPayment({
-            ...payment,
-            [e.target.name]: e.target.value,
-        });
-    };
-
-    const handleSave = async () => {
-        const newErrors = {};
-
-if (!payment.purchaseId) {
-  newErrors.purchaseId = "Purchase ID is required";
-}
-
-if (!payment.amount) {
-  newErrors.amount = "Amount is required";
-} else if (Number(payment.amount) <= 0) {
-  newErrors.amount = "Amount must be greater than 0";
-}
-
-if (!payment.paymentMode.trim()) {
-  newErrors.paymentMode = "Payment Mode is required";
-}
-
-if (!payment.transactionNumber.trim()) {
-  newErrors.transactionNumber = "Transaction Number is required";
-}
-
-if (!payment.paymentDate) {
-  newErrors.paymentDate = "Payment Date is required";
-}
-
-setErrors(newErrors);
-
-if (Object.keys(newErrors).length > 0) {
-  return;
-}
-        try {
-            await savePayment(payment);
-
-            alert("Payment Saved Successfully");
-            setPayment({
-  purchaseId: "",
-  amount: "",
-  paymentMode: "",
-  transactionNumber: "",
-  paymentDate: "",
-});
-            setErrors({
-  purchaseId: "",
-  amount: "",
-  paymentMode: "",
-  transactionNumber: "",
-  paymentDate: "",
-});
-
-            navigate("/admin/payments");
-        } catch (error) {
-            console.error(error);
-            alert("Failed to Save Payment");
-        }
-    };
-
-
-    return (
-
-        <Box
-            sx={{
-                p: 4,
-                background: palette.paperDim,
-                minHeight: "100vh",
-            }}
-        >
-
-            <Typography
-                sx={{
-                    fontFamily: "'Fraunces', serif",
-                    fontSize: 34,
-                    fontWeight: 600,
-                    color: palette.ink,
-                }}
-            >
-                Add Payment
-            </Typography>
-
-
-
-            <Card
-                elevation={0}
-                sx={{
-                    borderRadius: 4,
-                    background: palette.paper,
-                    border: `1px solid ${palette.line}`,
-                    boxShadow: "0 20px 50px rgba(11,47,34,.08)",
-                }}
-            >
-                <CardContent sx={{ p: 4 }}>
-
-
-
-                    <Grid container spacing={3}>
-
-
-                        <Grid item xs={12} md={6}>
-
-
-                            <TextField
-                                select
-                                fullWidth
-                                label="Payment To"
-                                sx={fieldSx}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <Payments color="action" />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                            >
-
-
-                                <MenuItem value="vendor">
-
-                                    Vendor
-
-                                </MenuItem>
-
-
-                                <MenuItem value="farmer">
-
-                                    Farmer
-
-                                </MenuItem>
-
-
-                            </TextField>
-
-
-                        </Grid>
-
-
-
-
-                        <Grid item xs={12} md={6}>
-
-
-                            <TextField
-                                fullWidth
-                                label="Party Name"
-                                sx={fieldSx}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <Person color="action" />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                            />
-
-
-                        </Grid>
-
-
-
-
-                        <Grid item xs={12} md={6}>
-
-                            <TextField
-                                fullWidth
-                                label="Amount"
-                                name="amount"
-                                value={payment.amount}
-                                required
-error={!!errors.amount}
-helperText={errors.amount}
-onChange={(e) => {
-  handleChange(e);
-
-  setErrors({
-    ...errors,
-    amount: "",
+  const [form, setForm] = useState({
+    purchaseId: "", amount: "", paymentMode: "CASH", transactionNumber: "", paymentDate: today,
   });
-}}
-                                sx={fieldSx}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <CurrencyRupee color="action" />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                            />
+  const [errors, setErrors] = useState({});
+  const [saving, setSaving] = useState(false);
+  const [toast, setToast] = useState(null);
 
+  const loadPurchases = async () => {
+    try {
+      const data = await getAllPurchases();
+      setPurchases([...(data || [])].reverse());
+    } catch { setPurchases([]); }
+  };
+  useEffect(() => { loadPurchases(); }, []);
 
-                        </Grid>
+  const set = (k) => (e) => {
+    setForm((f) => ({ ...f, [k]: e.target.value }));
+    setErrors((er) => ({ ...er, [k]: "" }));
+  };
 
+  const computePending = async (purchaseId, p) => {
+    setLoadingParty(true);
+    let paidSum = 0;
+    try {
+      const pays = await getPaymentsByPurchase(purchaseId);
+      paidSum = (pays || []).reduce((s, x) => s + (Number(x.amount) || 0), 0);
+    } catch { paidSum = 0; }
+    const total = Number(p?.totalAmount) || 0;
+    const due = Math.max(total - paidSum, 0);
+    setPaid(paidSum);
+    setPending(due);
+    setLoadingParty(false);
+    return due;
+  };
 
+  const onPickPurchase = async (e) => {
+    const id = e.target.value;
+    setErrors((er) => ({ ...er, purchaseId: "" }));
+    const p = purchases.find((x) => String(x.id) === String(id)) || null;
+    setSelected(p);
+    setForm((f) => ({ ...f, purchaseId: id }));
+    if (!p) { setPaid(0); setPending(0); return; }
+    const due = await computePending(id, p);
+    setForm((f) => ({ ...f, purchaseId: id, amount: due ? String(due) : "" }));
+  };
 
+  const partyName = selected ? (selected.vendorName || selected.farmerName || "—") : "—";
+  const partyType = selected ? (selected.vendorName ? "Vendor" : selected.farmerName ? "Farmer" : "—") : "—";
 
-                        <Grid item xs={12} md={6}>
+  const statusColor = (s) =>
+    s === "PAID" ? { bg: "rgba(46,125,50,.14)", fg: "#2e7d32" }
+    : s === "PARTIAL" ? { bg: "rgba(201,162,75,.18)", fg: "#8a6d1f" }
+    : { bg: "rgba(178,59,59,.12)", fg: "#b23b3b" };
 
+  const validate = () => {
+    const er = {};
+    if (!form.purchaseId) er.purchaseId = "Select a purchase";
+    if (!form.amount) er.amount = "Amount is required";
+    else if (Number(form.amount) <= 0) er.amount = "Amount must be greater than 0";
+    else if (pending > 0 && Number(form.amount) > pending) er.amount = `Cannot exceed pending ${inr(pending)}`;
+    if (!form.paymentMode) er.paymentMode = "Select a mode";
+    if (!form.paymentDate) er.paymentDate = "Date is required";
+    // transaction number is OPTIONAL
+    setErrors(er);
+    return Object.keys(er).length === 0;
+  };
 
-                            <TextField
-                                fullWidth
-                                label="Payment Mode"
-                                name="paymentMode"
-                                value={payment.paymentMode}
-                                required
-error={!!errors.paymentMode}
-helperText={errors.paymentMode}
-                                onChange={(e) => {
-  handleChange(e);
+  const handleSave = async () => {
+    if (!validate()) return;
+    setSaving(true);
+    try {
+      await savePayment({
+        purchaseId: Number(form.purchaseId),
+        amount: Number(form.amount),
+        paymentMode: form.paymentMode,
+        transactionNumber: form.transactionNumber || "",
+        paymentDate: form.paymentDate,
+      });
+      // refresh so the new status + pending reflect immediately
+      await loadPurchases();
+      const stillDue = await computePending(form.purchaseId, selected);
+      setToast({ t: "success", m: stillDue > 0 ? `Payment saved. Pending now ${inr(stillDue)}.` : "Payment saved. Purchase fully PAID." });
+      setForm((f) => ({ ...f, amount: "", transactionNumber: "" }));
+    } catch (e) {
+      setToast({ t: "error", m: e?.response?.data?.message || "Couldn't save the payment." });
+    } finally { setSaving(false); }
+  };
 
-  setErrors({
-    ...errors,
-    paymentMode: "",
-  });
-}}
-                                sx={fieldSx}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <AccountBalanceWallet color="action" />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                            />
+  const fieldSx = { "& .MuiOutlinedInput-root": { borderRadius: 2 } };
 
+  return (
+    <Box>
+      <Button startIcon={<ArrowBackRoundedIcon />} onClick={() => navigate("/admin/payments")} sx={{ color: forest, mb: 1 }}>
+        Back to payments
+      </Button>
+      <Typography variant="overline" sx={{ color: gold }}>Payments</Typography>
+      <Typography variant="h4" sx={{ fontWeight: 700, color: forest, mb: 0.5 }}>Add Payment</Typography>
+      <Typography variant="body2" sx={{ color: "#5b6b60", mb: 3 }}>
+        Pick a purchase — the party and pending amount fill in automatically.
+      </Typography>
 
-                        </Grid>
+      <Card sx={{ borderRadius: 4, maxWidth: 860, boxShadow: "0 25px 50px rgba(0,0,0,.08)" }}>
+        <CardContent sx={{ p: { xs: 2.5, sm: 4 } }}>
+          <Grid container spacing={2.5}>
+            {/* Purchase number — first */}
+            <Grid item xs={12}>
+              <TextField
+                select fullWidth label="Purchase Number" value={form.purchaseId}
+                onChange={onPickPurchase} error={!!errors.purchaseId} helperText={errors.purchaseId}
+                sx={fieldSx}
+                InputProps={{ startAdornment: <InputAdornment position="start"><ReceiptLongRoundedIcon sx={{ color: gold }} /></InputAdornment> }}
+              >
+                {purchases.length === 0 && <MenuItem disabled value="">No purchases found</MenuItem>}
+                {purchases.map((p) => (
+                  <MenuItem key={p.id} value={p.id}>
+                    {p.purchaseNumber} · {p.vendorName || p.farmerName || "—"} · {inr(p.totalAmount)}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
 
-                        <Grid item xs={12} md={6}>
-                            <TextField
-                                fullWidth
-                                label="Transaction Number"
-                                name="transactionNumber"
-                                value={payment.transactionNumber}
-                                required
-error={!!errors.transactionNumber}
-helperText={errors.transactionNumber}
-                                onChange={(e) => {
-  handleChange(e);
-
-  setErrors({
-    ...errors,
-    transactionNumber: "",
-  });
-}}
-                                sx={fieldSx}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <ReceiptLong color="action" />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                            />
-                        </Grid>
-                        <Grid item xs={12} md={6}>
-                            <TextField
-                                fullWidth
-                                type="date"
-                                label="Payment Date"
-                                name="paymentDate"
-                                value={payment.paymentDate}
-                                required
-error={!!errors.paymentDate}
-helperText={errors.paymentDate}
-                                onChange={(e) => {
-  handleChange(e);
-
-  setErrors({
-    ...errors,
-    paymentDate: "",
-  });
-}}
-                                InputLabelProps={{ shrink: true }}
-                                sx={fieldSx}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <CalendarToday color="action" />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                            />
-                        </Grid>
-                       <Grid item xs={12} md={6}>
-  <TextField
-  select
-  fullWidth
-  label="Purchase Number"
-  name="purchaseId"
-  value={payment.purchaseId}
-  onChange={(e) => {
-    handleChange(e);
-    setErrors({
-      ...errors,
-      purchaseId: "",
-    });
-  }}
-  sx={fieldSx}
-  slotProps={{
-    select: {
-      MenuProps: {
-        slotProps: {
-          paper: {
-            sx: {
-              maxHeight: 120,
-            },
-          },
-        },
-      },
-    },
-  }}
->
-  {purchases.map((purchase) => (
-    <MenuItem key={purchase.id} value={purchase.id}>
-      {purchase.purchaseNumber}
-    </MenuItem>
-  ))}
-</TextField>
-</Grid>
-                        <Grid item xs={12}>
-
-
-                            <Button
-                                startIcon={<Save />}
-                                variant="contained"
-                                onClick={handleSave}
-                                sx={{
-                                    mt: 2,
-                                    px: 5,
-                                    height: 52,
-                                    borderRadius: 2,
-                                    textTransform: "none",
-                                    fontWeight: 700,
-                                    background: "linear-gradient(135deg,#0F2E20,#0B2F22)",
-                                    "&:hover": {
-                                        background: "linear-gradient(135deg,#081F16,#0B2F22)",
-                                    },
-                                }}
-                            >
-                                Save Payment
-                            </Button>
-
-
-                        </Grid>
-
-
+            {/* Auto-filled party + pending panel */}
+            {selected && (
+              <Grid item xs={12}>
+                <Box sx={{ p: 2, borderRadius: 3, border: "1px solid rgba(201,162,75,.35)", background: "#FAF6EC" }}>
+                  {loadingParty ? (
+                    <Stack direction="row" spacing={1.5} alignItems="center"><CircularProgress size={18} sx={{ color: gold }} /><Typography variant="body2">Loading payment details…</Typography></Stack>
+                  ) : (
+                    <Grid container spacing={2}>
+                      <Info label="Party" value={partyName} sub={partyType} strong />
+                      <Info label="Total" value={inr(selected.totalAmount)} />
+                      <Info label="Paid" value={inr(paid)} color="#2e7d32" />
+                      <Info label="Pending" value={inr(pending)} color={pending > 0 ? "#b23b3b" : "#2e7d32"} strong />
+                      <Grid item xs={6} sm={2.4}>
+                        <Typography variant="caption" sx={{ color: "#5b6b60" }}>Status</Typography>
+                        <Box>
+                          <Chip size="small" label={selected.paymentStatus || "—"}
+                            sx={{ mt: 0.3, fontWeight: 700, background: statusColor(selected.paymentStatus).bg, color: statusColor(selected.paymentStatus).fg }} />
+                        </Box>
+                      </Grid>
                     </Grid>
+                  )}
+                </Box>
+              </Grid>
+            )}
 
+            <Grid item xs={12}><Divider sx={{ borderColor: "rgba(201,162,75,.25)" }} /></Grid>
 
-                </CardContent>
+            {/* Amount */}
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth type="number" label="Amount" value={form.amount} onChange={set("amount")}
+                error={!!errors.amount} helperText={errors.amount || (pending > 0 ? `Pending: ${inr(pending)}` : "")}
+                sx={fieldSx}
+                InputProps={{ startAdornment: <InputAdornment position="start"><CurrencyRupeeRoundedIcon sx={{ color: gold }} /></InputAdornment> }}
+              />
+            </Grid>
 
+            {/* Payment mode dropdown */}
+            <Grid item xs={12} sm={6}>
+              <TextField
+                select fullWidth label="Payment Mode" value={form.paymentMode} onChange={set("paymentMode")}
+                error={!!errors.paymentMode} helperText={errors.paymentMode} sx={fieldSx}
+                InputProps={{ startAdornment: <InputAdornment position="start"><AccountBalanceWalletRoundedIcon sx={{ color: gold }} /></InputAdornment> }}
+              >
+                {MODES.map((m) => <MenuItem key={m.value} value={m.value}>{m.label}</MenuItem>)}
+              </TextField>
+            </Grid>
 
-            </Card>
+            {/* Transaction number — optional */}
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth label="Transaction Number (optional)" value={form.transactionNumber}
+                onChange={set("transactionNumber")} sx={fieldSx}
+                helperText={form.paymentMode === "CASH" ? "Not needed for cash" : "UTR / cheque / reference no."}
+              />
+            </Grid>
 
+            {/* Date */}
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth type="date" label="Payment Date" value={form.paymentDate} onChange={set("paymentDate")}
+                error={!!errors.paymentDate} helperText={errors.paymentDate}
+                InputLabelProps={{ shrink: true }} sx={fieldSx}
+              />
+            </Grid>
 
+            <Grid item xs={12}>
+              <Button fullWidth size="large" onClick={handleSave} disabled={saving} startIcon={!saving && <SaveRoundedIcon />}
+                sx={{ mt: 1, height: 52, borderRadius: 2, textTransform: "none", fontWeight: 700, color: "#fff",
+                  background: "linear-gradient(135deg,#0F2E20,#0B2F22)", "&:hover": { background: "linear-gradient(135deg,#081F16,#0B2F22)" } }}>
+                {saving ? <CircularProgress size={22} color="inherit" /> : "Save Payment"}
+              </Button>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
 
-        </Box>
+      <Snackbar open={!!toast} autoHideDuration={3800} onClose={() => setToast(null)} anchorOrigin={{ vertical: "bottom", horizontal: "center" }}>
+        {toast && <Alert severity={toast.t} variant="filled" onClose={() => setToast(null)}>{toast.m}</Alert>}
+      </Snackbar>
+    </Box>
+  );
+}
 
-
-    )
-
+function Info({ label, value, sub, color, strong }) {
+  return (
+    <Grid item xs={6} sm={2.4}>
+      <Typography variant="caption" sx={{ color: "#5b6b60" }}>{label}</Typography>
+      <Typography sx={{ fontWeight: strong ? 800 : 700, color: color || "#0F2E20" }}>{value}</Typography>
+      {sub && <Typography variant="caption" sx={{ color: "#8a9a90" }}>{sub}</Typography>}
+    </Grid>
+  );
 }

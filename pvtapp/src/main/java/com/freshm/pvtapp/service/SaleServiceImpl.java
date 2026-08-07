@@ -84,7 +84,10 @@ public class SaleServiceImpl implements SaleService {
                 double price = nz(ir.getPrice());
                 double weight = nz(ir.getWeightKg());
                 double count = nz(ir.getItemCount());
-                double amount = (weight > 0) ? weight * price : count * price;
+                double qty = (count > 0 && weight > 0) ? count * weight   // boxes × kg/box
+                           : (weight > 0) ? weight               // total kg
+                           : count;                              // pieces
+                double amount = qty * price;
 
                 SaleItem item = new SaleItem();
                 item.setDescription(ir.getDescription());
