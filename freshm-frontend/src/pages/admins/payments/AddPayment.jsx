@@ -43,7 +43,9 @@ export default function AddPayment() {
   const loadPurchases = async () => {
     try {
       const data = await getAllPurchases();
-      setPurchases([...(data || [])].reverse());
+      // Only show purchases that still owe money. Fully-paid ones drop off the list.
+      const open = (data || []).filter((p) => p.pendingAmount == null || Number(p.pendingAmount) > 0);
+      setPurchases([...open].reverse());
     } catch { setPurchases([]); }
   };
   useEffect(() => { loadPurchases(); }, []);
@@ -55,13 +57,18 @@ export default function AddPayment() {
 
   const computePending = async (purchaseId, p) => {
     setLoadingParty(true);
-    let paidSum = 0;
-    try {
-      const pays = await getPaymentsByPurchase(purchaseId);
-      paidSum = (pays || []).reduce((s, x) => s + (Number(x.amount) || 0), 0);
-    } catch { paidSum = 0; }
     const total = Number(p?.totalAmount) || 0;
-    const due = Math.max(total - paidSum, 0);
+    let paidSum;
+    // Prefer the backend-computed paid amount (reliable). Fall back to summing payments.
+    if (p && p.paidAmount != null) {
+      paidSum = Number(p.paidAmount) || 0;
+    } else {
+      try {
+        const pays = await getPaymentsByPurchase(purchaseId);
+        paidSum = (pays || []).reduce((s, x) => s + (Number(x.amount) || 0), 0);
+      } catch { paidSum = 0; }
+    }
+    const due = (p && p.pendingAmount != null) ? Math.max(Number(p.pendingAmount), 0) : Math.max(total - paidSum, 0);
     setPaid(paidSum);
     setPending(due);
     setLoadingParty(false);
@@ -112,8 +119,12 @@ export default function AddPayment() {
         paymentDate: form.paymentDate,
       });
       // refresh so the new status + pending reflect immediately
-      await loadPurchases();
-      const stillDue = await computePending(form.purchaseId, selected);
+      const fresh = await getAllPurchases().then((d) => [...(d || [])]).catch(() => []);
+      const openFresh = fresh.filter((p) => p.pendingAmount == null || Number(p.pendingAmount) > 0);
+      setPurchases([...openFresh].reverse());
+      const updated = fresh.find((x) => String(x.id) === String(form.purchaseId)) || selected;
+      setSelected(updated);
+      const stillDue = await computePending(form.purchaseId, updated);
       setToast({ t: "success", m: stillDue > 0 ? `Payment saved. Pending now ${inr(stillDue)}.` : "Payment saved. Purchase fully PAID." });
       setForm((f) => ({ ...f, amount: "", transactionNumber: "" }));
     } catch (e) {

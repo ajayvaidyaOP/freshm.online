@@ -41,3 +41,8 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+// Required so Spring can resolve @PathVariable / @RequestParam names by reflection.
+tasks.withType(JavaCompile) {
+	options.compilerArgs << '-parameters'
+}

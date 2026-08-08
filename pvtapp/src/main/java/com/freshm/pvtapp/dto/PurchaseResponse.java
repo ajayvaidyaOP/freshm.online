@@ -12,6 +12,8 @@ public class PurchaseResponse {
     private String farmerName;
     private Double totalQuantity;
     private Double totalAmount;
+    private Double paidAmount;
+    private Double pendingAmount;
     private Double hamali;
     private Double commission;
     private Double transportAdvance;
@@ -151,4 +153,9 @@ public class PurchaseResponse {
                 ", items=" + items +
                 '}';
     }
+
+    public Double getPaidAmount() { return paidAmount; }
+    public void setPaidAmount(Double v) { this.paidAmount = v; }
+    public Double getPendingAmount() { return pendingAmount; }
+    public void setPendingAmount(Double v) { this.pendingAmount = v; }
 }

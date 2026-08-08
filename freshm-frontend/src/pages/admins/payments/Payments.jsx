@@ -180,6 +180,8 @@ export default function Payments() {
                                     }}
                                 >
                                     <TableCell>ID</TableCell>
+                                    <TableCell>Purchase No.</TableCell>
+                                    <TableCell>Party</TableCell>
                                     <TableCell>Amount</TableCell>
                                     <TableCell>Payment Mode</TableCell>
                                     <TableCell>Transaction Number</TableCell>
@@ -193,7 +195,11 @@ export default function Payments() {
                                     <TableRow key={payment.id}>
                                         <TableCell>{payment.id}</TableCell>
 
-                                        <TableCell>{payment.amount}</TableCell>
+                                        <TableCell sx={{ fontFamily: "monospace" }}>{payment.purchaseNumber || "—"}</TableCell>
+
+                                        <TableCell>{payment.partyName || "—"}</TableCell>
+
+                                        <TableCell>{payment.amount != null ? `₹${Number(payment.amount).toLocaleString("en-IN")}` : "—"}</TableCell>
 
                                         <TableCell>{payment.paymentMode}</TableCell>
 

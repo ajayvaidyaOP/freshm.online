@@ -23,6 +23,7 @@ import com.freshm.pvtapp.exception.ResourceNotFoundException;
 import com.freshm.pvtapp.repository.FarmerRepository;
 import com.freshm.pvtapp.repository.ProductRepository;
 import com.freshm.pvtapp.repository.PurchaseRepository;
+import com.freshm.pvtapp.repository.PaymentRepository;
 import com.freshm.pvtapp.repository.VendorRepository;
 import com.freshm.pvtapp.security.SecurityUtil;
 
@@ -32,6 +33,8 @@ import jakarta.transaction.Transactional;
 public class PurchaseServiceImpl implements PurchaseService {
 
     private final PurchaseRepository purchaseRepository;
+
+    private final PaymentRepository paymentRepository;
 
     private final ProductRepository productRepository;
 
@@ -46,6 +49,7 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     public PurchaseServiceImpl(
             PurchaseRepository purchaseRepository,
+            PaymentRepository paymentRepository,
             ProductRepository productRepository,
             VendorRepository vendorRepository,
             FarmerRepository farmerRepository,
@@ -53,6 +57,7 @@ public class PurchaseServiceImpl implements PurchaseService {
             CodeGeneratorService codeGeneratorService
     ) {
         this.purchaseRepository = purchaseRepository;
+        this.paymentRepository = paymentRepository;
         this.productRepository = productRepository;
         this.vendorRepository = vendorRepository;
         this.farmerRepository = farmerRepository;
@@ -339,7 +344,22 @@ public class PurchaseServiceImpl implements PurchaseService {
 
         response.setTotalQuantity(purchase.getTotalQuantity());
         response.setTotalAmount(purchase.getTotalAmount());
-        response.setPaymentStatus(purchase.getPaymentStatus().name());
+        double paidAmt = paymentRepository
+                .findAllByPurchaseId(purchase.getId())
+                .stream()
+                .mapToDouble(p -> p.getAmount() != null ? p.getAmount() : 0d)
+                .sum();
+        double totalAmt = purchase.getTotalAmount() != null ? purchase.getTotalAmount() : 0d;
+        response.setPaidAmount(paidAmt);
+        response.setPendingAmount(Math.max(totalAmt - paidAmt, 0d));
+
+        // Derive the displayed status from actual payments so it is always accurate
+        // (self-corrects any stale status, e.g. left over from a deleted payment).
+        String derivedStatus;
+        if (totalAmt > 0 && paidAmt >= totalAmt) derivedStatus = "PAID";
+        else if (paidAmt > 0) derivedStatus = "PARTIAL";
+        else derivedStatus = "UNPAID";
+        response.setPaymentStatus(derivedStatus);
 
         response.setItems(
                 purchase.getItems()

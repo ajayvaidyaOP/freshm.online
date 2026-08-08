@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { getAllPurchases } from "../../../services/purchaseService";
+import { getAllPurchases, getPurchaseById } from "../../../services/purchaseService";
+import InvoiceBill from "../../../components/bill/InvoiceBill";
+import { numberToWordsIndian } from "../../../utils/numberToWords";
+import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 
 import {
   Box,
@@ -17,6 +20,8 @@ import {
   Chip,
   Avatar,
   Stack,
+  IconButton,
+  Dialog,
 } from "@mui/material";
 
 import {
@@ -74,6 +79,38 @@ export default function Purchase() {
 
   const navigate = useNavigate();
   const [purchases, setPurchases] = useState([]);
+  const [view, setView] = useState(null);
+
+  const openBill = async (id) => {
+    try {
+      const p = await getPurchaseById(id);
+      const me = JSON.parse(localStorage.getItem("user") || "{}");
+      const items = (p.items || []).map((it) => ({
+        desc: it.productName,
+        unit: it.crateCount ?? "",
+        weightKg: undefined,
+        quantity: it.quantity,
+        weight: it.quantity,
+        rate: it.rate,
+        price: it.rate,
+        amount: it.amount,
+      }));
+      const grand = Number(p.totalAmount) || items.reduce((sm, r) => sm + (Number(r.amount) || 0), 0);
+      setView({
+        letterHeadName: p.letterHeadName || me.companyName || "COMPANY NAME",
+        invoiceNumber: p.purchaseNumber,
+        date: p.purchaseDate,
+        partyLabel: p.vendorName ? "Vendor" : "Farmer",
+        partyName: p.vendorName || p.farmerName || "--",
+        items,
+        charges: [],
+        grandTotal: grand,
+        amountInWords: grand > 0 ? `Rupees ${numberToWordsIndian(grand)} Only.` : "",
+      });
+    } catch (e) {
+      console.error("open purchase bill failed", e);
+    }
+  };
   useEffect(() => {
     loadPurchases();
   }, []);
@@ -191,6 +228,7 @@ export default function Purchase() {
                   <TableCell>Total Quantity</TableCell>
                   <TableCell>Total Amount</TableCell>
                   <TableCell>Payment Status</TableCell>
+                  <TableCell align="center">Bill</TableCell>
                 </TableRow>
               </TableHead>
 
@@ -250,6 +288,12 @@ export default function Purchase() {
                         variant="outlined"
                       />
                     </TableCell>
+
+                    <TableCell align="center">
+                      <IconButton size="small" onClick={() => openBill(item.id)} title="View invoice">
+                        <VisibilityRoundedIcon fontSize="small" />
+                      </IconButton>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -257,6 +301,11 @@ export default function Purchase() {
           </TableContainer>
         </CardContent>
       </Card>
+
+      <Dialog open={!!view} onClose={() => setView(null)} maxWidth="md" fullWidth
+        PaperProps={{ sx: { borderRadius: 3, p: 1, background: "#FAF6EC" } }}>
+        {view && <InvoiceBill type="PURCHASE" data={view} />}
+      </Dialog>
     </Box>
   );
 }

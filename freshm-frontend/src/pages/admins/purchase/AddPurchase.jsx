@@ -31,7 +31,8 @@ import {
   getAllFarmers,
   getAllProducts,
 } from "../../../services/purchaseService";
-import PurchaseBill from "../../../components/bill/PurchaseBill";
+import InvoiceBill from "../../../components/bill/InvoiceBill";
+import { numberToWordsIndian } from "../../../utils/numberToWords";
 
 const palette = {
   forestDeep: "#0B2F22",
@@ -77,6 +78,7 @@ export default function AddPurchase() {
   const [transportName, setTransportName] = useState("");
   const [vehicleNo, setVehicleNo] = useState("");
   const [mobileNo, setMobileNo] = useState("");
+  const [letterHead, setLetterHead] = useState(() => (JSON.parse(localStorage.getItem("user") || "{}").companyName || ""));
   const me = useMemo(() => JSON.parse(localStorage.getItem("user") || "{}"), []);
 
   const [purchase, setPurchase] = useState({
@@ -212,20 +214,9 @@ if (Object.keys(newErrors).length > 0) {
       //alert("Purchase ID : " + response.id);
       console.log(response);
 
-      setPurchase({
-  vendorId: "",
-  farmerId: "",
-  productId: "",
-  unit: "",
-  quantity: "",
-  kg: "",
-  rate: "",
-  remarks: "",
-
-  hamali: "",
-  commission: "",
-  transportAdvance: "",
-});
+      // Keep the form values after saving so the generated invoice stays on screen.
+      // (Use the reset below if you want to clear for a new entry.)
+      // setPurchase({ vendorId:"", farmerId:"", productId:"", unit:"", quantity:"", kg:"", rate:"", remarks:"", hamali:"", commission:"", transportAdvance:"" });
 setErrors({
   vendorId: "",
   farmerId: "",
@@ -241,6 +232,55 @@ setErrors({
   alert(JSON.stringify(error.response?.data));
 }
   };
+  const fmtDate = (d) => {
+    if (!d) return "";
+    try { return new Date(d).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "2-digit" }).replace(/ /g, "-"); }
+    catch { return d; }
+  };
+  const nnum = (v) => Number(v) || 0;
+
+  // Live bill from the form (so you can preview BEFORE generating).
+  const selProduct = products.find((p) => String(p.id) === String(purchase.productId));
+  const selVendor = vendors.find((v) => String(v.id) === String(purchase.vendorId));
+  const selFarmer = farmers.find((fm) => String(fm.id) === String(purchase.farmerId));
+  const partyName = purchaseType === "vendor"
+    ? (selVendor?.vendorName || selVendor?.name || "--")
+    : (selFarmer?.farmerName || selFarmer?.name || "--");
+
+  const lineAmount = nnum(purchase.quantity) * nnum(purchase.rate);
+  const purchaseItem = {
+    desc: selProduct?.productName || selProduct?.articleName || purchase.remarks || "Item",
+    unit: purchase.unit,
+    weightKg: purchase.kg,
+    quantity: purchase.quantity,
+    weight: purchase.quantity,
+    rate: purchase.rate,
+    price: purchase.rate,
+    amount: lineAmount,
+  };
+  const purchaseCharges = [
+    { label: "Hamali", amount: nnum(purchase.hamali) },
+    { label: "Comission", amount: nnum(purchase.commission) },
+    { label: "Transport Advance", amount: nnum(purchase.transportAdvance) },
+  ].filter((c) => c.amount > 0);
+  const purchaseGrand = lineAmount + purchaseCharges.reduce((sm, c) => sm + c.amount, 0);
+
+  const billData = {
+    letterHeadName: letterHead || me.companyName || "COMPANY NAME",
+    invoiceNumber: saved?.purchaseNumber || "—",
+    date: saved?.purchaseDate ? fmtDate(saved.purchaseDate) : fmtDate(new Date().toISOString().slice(0, 10)),
+    partyLabel: purchaseType === "vendor" ? "Vendor" : "Farmer",
+    partyName,
+    partyAddress: partyLocation || "--",
+    transportName: transportName,
+    vehicleNumber: vehicleNo,
+    transportMobile: mobileNo,
+    items: purchase.productId || purchase.quantity ? [purchaseItem] : [],
+    charges: purchaseCharges,
+    grandTotal: purchaseGrand,
+    amountInWords: purchaseGrand > 0 ? `Rupees ${numberToWordsIndian(purchaseGrand)} Only.` : "",
+  };
+
   return (
     <Box
       sx={{
@@ -704,6 +744,10 @@ setErrors({
 
             {/* Save Button */}
 
+            <Grid item xs={12} sm={6}>
+              <TextField fullWidth size="small" label="Letterhead name (prints on the bill)"
+                value={letterHead} onChange={(e) => setLetterHead(e.target.value)} />
+            </Grid>
             <Grid item xs={12}>
               <Typography variant="subtitle2" sx={{ mt: 1, mb: 0.5, color: "#0F2E20", fontWeight: 700 }}>
                 Transport details (printed on the invoice)
@@ -741,11 +785,12 @@ setErrors({
         </CardContent>
       </Card>
 
-      {billData && (
-        <Box sx={{ mt: 3 }}>
-          <PurchaseBill data={billData} />
-        </Box>
-      )}
+      <Box sx={{ mt: 3 }}>
+        <Typography variant="overline" sx={{ color: "#C9A24B" }}>
+          {saved ? "Generated purchase invoice" : "Live preview"}
+        </Typography>
+        <InvoiceBill type="PURCHASE" data={billData} canDownload={!!saved} />
+      </Box>
 
     </Box>
   );
