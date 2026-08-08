@@ -46,7 +46,7 @@ public class PaymentController {
      */
     @GetMapping("/{id}")
     public PaymentResponse getPaymentById(
-            @PathVariable Long id
+            @PathVariable("id") Long id
     ) {
         return paymentService.getPaymentById(id);
     }
@@ -56,7 +56,7 @@ public class PaymentController {
      */
     @GetMapping("/purchase/{purchaseId}")
     public List<PaymentResponse> getPaymentsByPurchase(
-            @PathVariable Long purchaseId
+            @PathVariable("purchaseId") Long purchaseId
     ) {
         return paymentService.getPaymentsByPurchase(purchaseId);
     }
@@ -67,7 +67,7 @@ public class PaymentController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePayment(
-            @PathVariable Long id
+            @PathVariable("id") Long id
     ) {
         paymentService.deletePayment(id);
     }

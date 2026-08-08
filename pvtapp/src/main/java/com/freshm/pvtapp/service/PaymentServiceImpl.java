@@ -103,6 +103,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    @Transactional
     public List<PaymentResponse> getAllPayments() {
 
         Company company = securityUtil.getCurrentCompany();
@@ -115,6 +116,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    @Transactional
     public List<PaymentResponse> getPaymentsByPurchase(Long purchaseId) {
 
         return paymentRepository
@@ -138,7 +140,27 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public void deletePayment(Long id) {
 
+        Payment payment = paymentRepository.findById(id).orElse(null);
+        Purchase purchase = payment != null ? payment.getPurchase() : null;
+
         paymentRepository.deleteById(id);
+
+        if (purchase != null) {
+            double totalPaid = paymentRepository
+                    .findAllByPurchaseId(purchase.getId())
+                    .stream()
+                    .mapToDouble(p -> p.getAmount() != null ? p.getAmount() : 0d)
+                    .sum();
+            double due = purchase.getTotalAmount() != null ? purchase.getTotalAmount() : 0d;
+            if (due > 0 && totalPaid >= due) {
+                purchase.setPaymentStatus(PaymentStatus.PAID);
+            } else if (totalPaid > 0) {
+                purchase.setPaymentStatus(PaymentStatus.PARTIAL);
+            } else {
+                purchase.setPaymentStatus(PaymentStatus.UNPAID);
+            }
+            purchaseRepository.save(purchase);
+        }
     }
 
     private PaymentResponse convertToResponse(Payment payment) {
@@ -150,7 +172,17 @@ public class PaymentServiceImpl implements PaymentService {
         response.setPaymentMode(payment.getPaymentMode().name());
         response.setTransactionNumber(payment.getTransactionNumber());
         response.setPaymentDate(payment.getPaymentDate());
-        // response.setRemarks(payment.getRemarks());
+
+        Purchase linked = payment.getPurchase();
+        if (linked != null) {
+            response.setPurchaseId(linked.getId());
+            response.setPurchaseNumber(linked.getPurchaseNumber());
+            if (linked.getVendor() != null) {
+                response.setPartyName(linked.getVendor().getVendorName());
+            } else if (linked.getFarmer() != null) {
+                response.setPartyName(linked.getFarmer().getFarmerName());
+            }
+        }
 
         return response;
     }

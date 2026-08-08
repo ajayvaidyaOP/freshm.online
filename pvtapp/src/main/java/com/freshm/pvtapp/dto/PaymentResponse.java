@@ -5,6 +5,9 @@ import java.time.LocalDate;
 public class PaymentResponse {
 
     private Long id;
+    private Long purchaseId;
+    private String purchaseNumber;
+    private String partyName;
     private Double amount;
     private String paymentMode;
     private String transactionNumber;
@@ -115,4 +118,11 @@ public class PaymentResponse {
             );
         }
     }
+
+    public Long getPurchaseId() { return purchaseId; }
+    public void setPurchaseId(Long v) { this.purchaseId = v; }
+    public String getPurchaseNumber() { return purchaseNumber; }
+    public void setPurchaseNumber(String v) { this.purchaseNumber = v; }
+    public String getPartyName() { return partyName; }
+    public void setPartyName(String v) { this.partyName = v; }
 }
